@@ -1,17 +1,20 @@
-# Module 1 Group Assignment
+#Module 1 Group Assignment
 
 CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/579310/pages/project-1)
 
 ## App Info:
 
 * Team Name: Peter Parkers
-* App Name: TODO
+* App Name: Missions (tentative name)
 * App Link: <https://TODO.com/>
 
 ### Students
 
-* First Last, x500@umn.edu
-* ...
+* Jeonghyo Kim, kim02607
+* Kelvin Pang, pang0161
+* Salman Hussein, husse347
+* Xuan Gu, ehrma055
+* Donald Huynh, huynh338
 
 
 ## Key Features
