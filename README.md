@@ -45,7 +45,8 @@ There are a few tools for mock-ups. Paper prototypes (low-tech, but effective an
 
 In this space please either provide images (around 4) showing your prototypes, OR, a link to an online hosted mock-up tool like moqups.com
 
-*Link: [https://www.figma.com/design/luParcBqdCh4ywY9Jmwp9h/Test-Project?node-id=0-1&m=dev&t=DNVU6SZXRvBktKUJ-1]
+* Link: [https://www.figma.com/design/luParcBqdCh4ywY9Jmwp9h/Test-Project?node-id=0-1&m=dev&t=DNVU6SZXRvBktKUJ-1]
+
 **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
 
 ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)
