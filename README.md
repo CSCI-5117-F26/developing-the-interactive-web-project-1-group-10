@@ -4,7 +4,7 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 
 ## App Info:
 
-* Team Name: TODO
+* Team Name: Peter Parkers
 * App Name: TODO
 * App Link: <https://TODO.com/>
 
