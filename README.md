@@ -50,14 +50,19 @@ In this space please either provide images (around 4) showing your prototypes, O
 **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
 
 ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)  
-We used figma to make a mock-up of our user engagement focused microblogging website.
-![Log-in page](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
-![Sign-up page](./static/images/sign-up.png)
-![Initial homepage](./static/images/initial%20homepage%20hver.%201.png)
-![Regular homepage](./static/images/homepage%20ver.%202.png)
-![Upload page](./static/images/upload%20ver.%202.png)
-![User profile page](./static/images/proflie%20for%20own.png)
-![Other user profile page](./static/images/proflie%20for%20other.png)
+We used figma to make a mock-up of our mission based, user engagement focused microblogging website.  
+The first two images of our mock-up show simple log-in/sign-up pages
+![](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
+![](./static/images/sign-up.png)
+On first loggin in, the user should be either shown a random category or the last category they posted to and that category's mission of the day before being able to view any feeds.
+![](./static/images/initial%20homepage%20hver.%201.png)
+Once past that, we see a typical feed. We want a mechanism for people to be able to engage and self-moderate. Think, reporting system + popular posts survive per category (maybe?).
+![](./static/images/homepage%20ver.%202.png)
+Barebones upload page.
+![](./static/images/upload%20ver.%202.png)
+Profile pages.
+![](./static/images/proflie%20for%20own.png)
+![](./static/images/proflie%20for%20other.png)
 
 ## External Dependencies
 
