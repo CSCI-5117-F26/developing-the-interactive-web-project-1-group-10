@@ -50,7 +50,8 @@ In this space please either provide images (around 4) showing your prototypes, O
 **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
 
 ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)
-
+We used figma to make a mock-up of our user engagement focused microblogging website.
+![](./static/images/log-in.png)
 
 ## External Dependencies
 
