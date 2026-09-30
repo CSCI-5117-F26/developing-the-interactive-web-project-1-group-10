@@ -43,9 +43,9 @@ along with a very brief caption:**
 
 * Link: [https://www.figma.com/design/luParcBqdCh4ywY9Jmwp9h/Test-Project?node-id=0-1&m=dev&t=DNVU6SZXRvBktKUJ-1]
 
-**[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
+<!-- **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:** -->
 
-** ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)**
+<!-- ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif) -->
 We used figma to make a mock-up of our mission based, user engagement focused microblogging website.  
 The first two images of our mock-up show simple log-in/sign-up pages
 ![](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
