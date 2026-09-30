@@ -51,13 +51,13 @@ In this space please either provide images (around 4) showing your prototypes, O
 
 ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)  
 We used figma to make a mock-up of our user engagement focused microblogging website.
-![](./static/images/log-in.png)
-![](./static/images/sign-up.png)
-![](./static/images/initial%20homepage%20hver.%201.png)
-![](./static/images/homepage%20ver.%202.png)
-![](./static/images/upload%20ver.%202.png)
-![](./static/images/proflie%20for%20own.png)
-![](./static/images/proflie%20for%20other.png)
+![Log-in page](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
+![Sign-up page](./static/images/sign-up.png)
+![Initial homepage](./static/images/initial%20homepage%20hver.%201.png)
+![Regular homepage](./static/images/homepage%20ver.%202.png)
+![Upload page](./static/images/upload%20ver.%202.png)
+![User profile page](./static/images/proflie%20for%20own.png)
+![Other user profile page](./static/images/proflie%20for%20other.png)
 
 ## External Dependencies
 
