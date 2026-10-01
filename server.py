@@ -1,4 +1,8 @@
 from flask import Flask, redirect, render_template, request, url_for
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
