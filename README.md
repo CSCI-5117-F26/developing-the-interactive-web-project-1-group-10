@@ -52,7 +52,8 @@ The first two images of our mock-up show simple log-in/sign-up pages
 ![](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
 ![](./static/images/sign-up.png)
 ### The Initial Page
-On first loggin in, the user should be either shown a random category or the last category they posted to and that category's mission of the day before being able to view any feeds.
+When a user first logs in, they can view a limited number of posts. To view more posts, they must create their own post. Until they do, the remaining posts are hidden, with a message prompting them to post to unlock more content.
+<img width="1440" height="1024" alt="locked" src="https://github.com/user-attachments/assets/71634450-d8a7-4ac3-9e7c-d444e45102de" />
 ![](./static/images/initial%20homepage%20ver.%201.png)
 ### Homepage
 Once past that, we see a typical feed. We want a mechanism for people to be able to engage and self-moderate. Think, reporting system + popular posts survive per category (maybe?).
