@@ -51,13 +51,14 @@ We used figma to make a mock-up of our mission based, user engagement focused mi
 The first two images of our mock-up show simple log-in/sign-up pages
 ![](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
 ![](./static/images/sign-up.png)
-### The Initial Page
-When a user first logs in, they can view a limited number of posts. To view more posts, they must create their own post. Until they do, the remaining posts are hidden, with a message prompting them to post to unlock more content.
-<img width="1440" height="1024" alt="locked" src="https://github.com/user-attachments/assets/71634450-d8a7-4ac3-9e7c-d444e45102de" />
-![](./static/images/initial%20homepage%20ver.%201.png)
+
+
 ### Homepage
 Once past that, we see a typical feed. We want a mechanism for people to be able to engage and self-moderate. Think, reporting system + popular posts survive per category (maybe?).
 ![](./static/images/homepage%20ver.%203.png)
+After users have viewed a certain number of missions (maybe 3?), they will be temporarily blocked from viewing more missions until they upload their own daily mission.
+![](./static/images/locked.png)
+![](./static/images/initial%20homepage%20ver.%201.png)
 Here's a view of the expanded hamburger bar.
 ![](./static/images/homepage%20-%20menu.png)
 On clicking the meatball menu, we're given a few options for a post.
@@ -66,6 +67,7 @@ A look of the comment section.
 ![](./static/images/homepage%20-%20comment%20section.png)
 Barebones upload page.
 ![](./static/images/upload%20ver.%201.png)
+
 ### Profile Pages
 ![](./static/images/proflie%20for%20own%20-%20default.png)
 ![](./static/images/proflie%20for%20own%20-%20liked%20videos.png)
