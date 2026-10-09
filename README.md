@@ -52,23 +52,31 @@ The first two images of our mock-up show simple log-in/sign-up pages
 ![](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
 ![](./static/images/sign-up.png)
 
-
 ### Homepage
 Once past that, we see a typical feed. We want a mechanism for people to be able to engage and self-moderate. Think, reporting system + popular posts survive per category (maybe?).
 ![](./static/images/homepage%20ver.%203.png)
-After users have viewed a certain number of missions (maybe 3?), they will be temporarily blocked from viewing more missions until they upload their own daily mission.
-![](./static/images/locked.png)
-![](./static/images/initial%20homepage%20ver.%201.png)
-Here's a view of the expanded hamburger bar.
-![](./static/images/homepage%20-%20menu.png)
 On clicking the meatball menu, we're given a few options for a post.
 ![](./static/images/homepage%20-%20meatball%20menu.png)
 A look of the comment section.
 ![](./static/images/homepage%20-%20comment%20section.png)
-Barebones upload page.
-![](./static/images/upload%20ver.%201.png)
+After users have viewed a certain number of missions (maybe 3?), they will be temporarily blocked from viewing more missions until they upload their own daily mission.
+![](./static/images/locked.png)
+![](./static/images/initial%20homepage%20ver.%201.png)
+
+### Upload
+When you click "Upload," you'll be taken to this screen.
+![](./static/images/upload%20ver.%202.png)
+
+### Menu
+Here's a view of the expanded hamburger bar.
+![](./static/images/homepage%20-%20menu.png)
+When you click "Home," you'll return to the homepage (as shown earlier). When you click "Mission Tracking," you'll be taken to the following screen(this is still under consideration so we might not go with a mission tracking page.).
+![](./static/images/mission%20tracking.png)
+When you click "Subscriptions," you'll be taken to the Subscriptions page, which is dedicated to displaying content from users you've subscribed to.
+![](./static/images/subscriptions.png)
 
 ### Profile Pages
+When you click "Profile" in the menu or just Click on your profile picture (usually in the top-right corner), you'll be taken to your personal profile page. "Liked Videos" and "Your Videos" are also sections within the Profile page, as shown below.
 ![](./static/images/proflie%20for%20own%20-%20default.png)
 ![](./static/images/proflie%20for%20own%20-%20liked%20videos.png)
 On clicking any of your videos' meatball menu, you can edit, delete, or share. (for now...)
@@ -77,8 +85,7 @@ On clicking any of your videos' meatball menu, you can edit, delete, or share. (
 ![](./static/images/delete.png)
 No options meatball menue for other users, clicking a video should bring you back to a view of a video, similar to the default homepage view.
 ![](./static/images/proflie%20for%20other.png)
-Here's a mission page that shows the stats of a user, this is still under consideration so we might not go with a mission tracking page.
-![](./static/images/mission%20tracking.png)
+
 
 ## External Dependencies
 
