@@ -64,7 +64,7 @@ After users have viewed a certain number of missions (maybe 3?), they will be te
 ![](./static/images/initial%20homepage%20ver.%201.png)
 
 ### Upload
-When you click "Upload," you'll be taken to this screen.
+When you click "Upload," you'll be taken to this screen.You can upload your content and edit the text here. Of course, you can always go back by clicking the arrow in the top-right corner.
 ![](./static/images/upload%20ver.%202.png)
 
 ### Menu
@@ -83,7 +83,7 @@ On clicking any of your videos' meatball menu, you can edit, delete, or share. (
 ![](./static/images/proflie%20for%20own%20-%20meatball%20menu.png)
 ![](./static/images/edit%20-%20update.png)
 ![](./static/images/delete.png)
-No options meatball menue for other users, clicking a video should bring you back to a view of a video, similar to the default homepage view.
+No options meatball menue for other users, clicking a video should bring you back to a view of a video, similar to the default homepage view(Oh, and by the way, you can also visit other users' profiles by clicking on their profile pictures on the homepage.).
 ![](./static/images/proflie%20for%20other.png)
 
 
