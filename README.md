@@ -51,7 +51,7 @@ The first two images of our mock-up show simple log-in/sign-up pages
 ![](./static/images/log-in.png "A simple Log-in/Sign-up scheme")
 ![](./static/images/sign-up.png)
 On first loggin in, the user should be either shown a random category or the last category they posted to and that category's mission of the day before being able to view any feeds.
-![](./static/images/initial%20homepage%20hver.%201.png)
+![](./static/images/initial%20homepage%20ver.%201.png)
 Once past that, we see a typical feed. We want a mechanism for people to be able to engage and self-moderate. Think, reporting system + popular posts survive per category (maybe?).
 ![](./static/images/homepage%20ver.%202.png)
 Barebones upload page.
