@@ -58,9 +58,12 @@ Once past that, we see a typical feed. We want a mechanism for people to be able
 ![](./static/images/homepage%20-%20meatball%20menu.png)
 ![](./static/images/homepage%20-%20comment%20section.png)
 Barebones upload page.
-![](./static/images/upload%20ver.%202.png)
+![](./static/images/upload%20ver.%201.png)
 Profile pages.
-![](./static/images/proflie%20for%20own.png)
+![](./static/images/proflie%20for%20own%20-%20default.png)
+![](./static/images/proflie%20for%20own%20-%20liked%20videos.png)
+![](./static/images/proflie%20for%20own%20-%20meatball%20menu.png)
+
 ![](./static/images/proflie%20for%20other.png)
 
 ## External Dependencies
