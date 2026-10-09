@@ -63,8 +63,13 @@ Profile pages.
 ![](./static/images/proflie%20for%20own%20-%20default.png)
 ![](./static/images/proflie%20for%20own%20-%20liked%20videos.png)
 ![](./static/images/proflie%20for%20own%20-%20meatball%20menu.png)
+![](./static/images/edit%20-%20update.png)
+![](./static/images/delete.png)
 
 ![](./static/images/proflie%20for%20other.png)
+![](./static/images/proflie%20for%20other%20-%20meatball%20menu.png)
+
+![](./static/images/mission%20tracking.png)
 
 ## External Dependencies
 
