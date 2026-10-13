@@ -66,5 +66,9 @@ def login():
 def profile():
     return render_template("profile_own.html")
 
+@app.route("/profile_other")
+def profile_other():
+    return render_template("profile_other.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

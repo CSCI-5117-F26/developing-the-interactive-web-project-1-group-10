@@ -219,6 +219,189 @@ body.menu-open {
     padding: 16px;
 }
 
+.post-feed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 960px;
+    margin: 56px auto 0;
+}
+
+.post-item {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 590px);
+    align-items: start;
+    justify-content: center;
+    gap: 36px;
+    width: 100%;
+}
+
+.post-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding-top: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.post-user:hover .post-avatar,
+.post-user:focus .post-avatar {
+    background: #c8c8c8;
+}
+
+.post-user:focus-visible {
+    border-radius: 8px;
+    outline: 3px solid #111;
+    outline-offset: 4px;
+}
+
+.post-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    background: #dedede;
+    color: #111;
+}
+
+.post-avatar .lucide {
+    width: 56px;
+    height: 56px;
+    stroke-width: 1.8;
+}
+
+.post-username {
+    max-width: 110px;
+    overflow: hidden;
+    color: #222;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.post-card {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 46px 48px 20px;
+    border-radius: 16px;
+    background: #dedede;
+}
+
+.post-card::before {
+    position: absolute;
+    top: 42px;
+    left: -18px;
+    width: 0;
+    height: 0;
+    border-top: 14px solid transparent;
+    border-right: 20px solid #dedede;
+    border-bottom: 14px solid transparent;
+    content: "";
+}
+
+.post-menu {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #c6c6c6;
+    color: #fff;
+    cursor: pointer;
+}
+
+.post-menu:hover,
+.post-menu:focus {
+    background: #aaa;
+}
+
+.post-menu .lucide {
+    width: 22px;
+    height: 22px;
+}
+
+.post-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #808080;
+}
+
+.post-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.post-copy {
+    padding: 24px 4px 14px;
+}
+
+.post-title {
+    margin: 0 0 8px;
+    color: #111;
+    font-size: 25px;
+    line-height: 1.2;
+}
+
+.post-description {
+    margin: 0;
+    color: #111;
+    font-size: 20px;
+    line-height: 1.45;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.post-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #222;
+    cursor: pointer;
+}
+
+.post-actions button:hover,
+.post-actions button:focus {
+    background: #c8c8c8;
+}
+
+.post-actions .lucide {
+    width: 30px;
+    height: 30px;
+    stroke-width: 2;
+}
+
 @media (max-width: 680px) {
     .top-bar {
         flex-wrap: wrap;
@@ -270,6 +453,63 @@ body.menu-open {
     .pure-img-responsive {
         max-width: 100%;
         height: auto;
+    }
+
+    .post-feed {
+        gap: 28px;
+        margin-top: 32px;
+    }
+
+    .post-item {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .post-user {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+        padding-left: 12px;
+    }
+
+    .post-avatar {
+        width: 56px;
+        height: 56px;
+    }
+
+    .post-avatar .lucide {
+        width: 32px;
+        height: 32px;
+    }
+
+    .post-username {
+        max-width: calc(100% - 80px);
+        font-size: 16px;
+    }
+
+    .post-card {
+        padding: 42px 18px 18px;
+        border-radius: 14px;
+    }
+
+    .post-card::before {
+        top: -16px;
+        left: 28px;
+        border-right: 14px solid transparent;
+        border-bottom: 18px solid #dedede;
+        border-left: 14px solid transparent;
+    }
+
+    .post-copy {
+        padding: 18px 2px 12px;
+    }
+
+    .post-title {
+        font-size: 22px;
+    }
+
+    .post-description {
+        font-size: 17px;
     }
 }
 
