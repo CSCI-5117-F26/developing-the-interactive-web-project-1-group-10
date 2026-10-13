@@ -1,17 +1,49 @@
 const menuBtn = document.getElementById('menuBtn');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebarOverlay');
+const closeBtn = document.getElementById('sidebarClose');
 
-if (menuBtn) {
-    menuBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('open');
-    });
+if (window.lucide) {
+    window.lucide.createIcons();
 }
 
-if (overlay) {
+if (menuBtn && sidebar && overlay && closeBtn) {
+    let isOpen = false;
+
+    const setMenuOpen = (open, restoreFocus = false) => {
+        isOpen = open;
+        sidebar.classList.toggle('open', open);
+        overlay.classList.toggle('open', open);
+        document.body.classList.toggle('menu-open', open);
+        menuBtn.setAttribute('aria-expanded', String(open));
+        sidebar.setAttribute('aria-hidden', String(!open));
+
+        if (open) {
+            closeBtn.focus();
+        } else if (restoreFocus) {
+            menuBtn.focus();
+        }
+    };
+
+    menuBtn.addEventListener('click', () => {
+        setMenuOpen(!isOpen);
+    });
+
     overlay.addEventListener('click', () => {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('open');
+        setMenuOpen(false, true);
+    });
+
+    closeBtn.addEventListener('click', () => {
+        setMenuOpen(false, true);
+    });
+
+    sidebar.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => setMenuOpen(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && isOpen) {
+            setMenuOpen(false, true);
+        }
     });
 }
