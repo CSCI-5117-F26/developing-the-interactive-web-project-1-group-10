@@ -35,19 +35,19 @@
         </ul>
         <ul class="pure-menu-list">
             <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Following</a>
+                <a href="/?category=following" class="pure-menu-link">Following</a>
             </li>
             <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 1</a>
+                <a href="/?category=general" class="pure-menu-link">General</a>
             </li>
             <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 2</a>
+                <a href="/?category=sport" class="pure-menu-link">Sport</a>
             </li>
             <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 3</a>
+                <a href="/?category=study" class="pure-menu-link">Study</a>
             </li>
             <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 4</a>
+                <a href="/?category=hobby" class="pure-menu-link">Hobby</a>
             </li>
             <li class="pure-menu-item">
                 <a href="/profile" class="pure-menu-link">Profile</a>
@@ -55,20 +55,24 @@
         </ul>
     </div>
     <div>
-        <h2>Today's Mission: {{ missions[0] }}</h2>
+        {% if category != "following" %}
+            <h2>Today's Mission: {{ mission }}</h2>
+        {% endif %}
     </div>
     <div>
         {% for post in posts %}
-            <h2 class="content-subhead">{{ post.title }}</h2>
-            <h3 class="content-subhead">{{ post.userName }}</h3>
-            <p>
-                {{ post.description }}
-            </p>
+            {% if post.category == category %}
+                <h2 class="content-subhead">{{ post.title }}</h2>
+                <h3 class="content-subhead">{{ post.userName }}</h3>
+                <p>
+                    {{ post.description }}
+                </p>
 
-            <div class="pure-g">
-                <div class="pure-u-1-4">
-                    <img class="pure-img-responsive" src={{ post.video }}>
-                </div>
+                <div class="pure-g">
+                    <div class="pure-u-1-4">
+                        <img class="pure-img-responsive" src={{ post.video }}>
+                    </div>
+            {% endif %}
             </div>
         {% endfor %}
     </div>

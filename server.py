@@ -12,18 +12,51 @@ def homepage():
         {
             "userName": "user1",
             "title": "title1",
+            "category": "sport",
             "description": "description1",
             "video": "http://farm3.staticflickr.com/2875/9069037713_1752f5daeb.jpg",
         },
         {
             "userName": "user2",
             "title": "test_title",
+            "category": "study",
             "description": "test",
+            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
+        },
+        {
+            "userName": "user3",
+            "title": "bird!!",
+            "category": "general",
+            "description": "Look at this bird!!!",
             "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
         }
     ]
-    missions = ["bird", "baseball", "book", "computer"]
-    return render_template("homepage.html", posts = posts, missions = missions)
+    missions = [
+        {
+            "category": "following",
+            "mission": "None",
+        },
+        {
+            "category": "general",
+            "mission": "bird",
+        },
+        {
+            "category": "sport",
+            "mission": "baseball",
+        },
+        {
+            "category": "study",
+            "mission": "book",
+        },
+        {
+            "category": "hobby",
+            "mission": "online",
+        },
+    ]
+
+    category = request.args.get("category") or "following"
+    mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
+    return render_template("homepage.html", posts = posts, mission = mission, category=category)
 
 @app.route("/login")
 def login():
