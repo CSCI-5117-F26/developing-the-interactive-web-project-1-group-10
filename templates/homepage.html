@@ -1,74 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Homepage</title>
-</head>
-<body>
-    <div class="pure-menu pure-menu-horizontal">
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
-                <a href="#" id="menuLink1" class="pure-menu-link"></a>
-                <ul class="pure-menu-children">
-                    <li class="pure-menu-item">
-                        <a href="/" class="pure-menu-link">Home</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Mission Tracking</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Subscriptions</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="{{ url_for('profile') }}" class="pure-menu-link">Profile</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Your Videos</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Liked Videos</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        <ul class="pure-menu-list">
-            <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Following</a>
-            </li>
-            <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 1</a>
-            </li>
-            <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 2</a>
-            </li>
-            <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 3</a>
-            </li>
-            <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link">Category 4</a>
-            </li>
-        </ul>
-        <a href="{{ url_for('profile') }}" class="profile-icon">
-            <img src="{{ url_for('static', filename='images/profile-circle.svg') }}" alt="Profile">
-        </a>
-    </div>
-    <div>
-        {% for post in posts %}
-            <h2 class="content-subhead">{{ post.title }}</h2>
-            <h3 class="content-subhead">{{ post.userName }}</h3>
-            <p>
-                {{ post.description }}
-            </p>
+{% extends "base.html" %}
 
-            <div class="pure-g">
-                <div class="pure-u-1-4">
-                    <img class="pure-img-responsive" src={{ post.video }}>
-                </div>
-            </div>
+{% block title %}Homepage{% endblock %}
+
+{% block banner %}
+    {% if category != "following" %}
+        <div class="mission-banner">
+            <h2>Today's Mission: {{ mission }}</h2>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <section class="post-feed" aria-label="Posts">
+        {% for post in posts %}
+            {% if post.category == category %}
+                {% include "components/_vlog_card.html" %}
+            {% endif %}
         {% endfor %}
-    </div>
-</body>
-</html>
+    </section>
+{% endblock %}
