@@ -2,12 +2,16 @@ from flask import Flask, redirect, render_template, request, url_for
 import os
 from dotenv import load_dotenv
 
+from database import get_videos_by_category
+
 load_dotenv()
 
 app = Flask(__name__)
 
 @app.route("/")
 def homepage():
+    category = request.args.get("category") or "general"
+
     posts = [
         {
             "userName": "user1",
@@ -38,6 +42,19 @@ def homepage():
             "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
         }
     ]
+
+    database_videos = get_videos_by_category(category)
+    posts.extend(
+        {
+            "userName": video["username"],
+            "title": video["title"],
+            "category": video["category"],
+            "description": video["description"],
+            "video": video["video_url"],
+        }
+        for video in database_videos
+    )
+
     missions = [
         {
             "category": "following",
@@ -61,7 +78,6 @@ def homepage():
         },
     ]
 
-    category = request.args.get("category") or "general"
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
 
