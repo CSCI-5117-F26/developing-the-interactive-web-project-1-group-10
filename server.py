@@ -8,7 +8,21 @@ app = Flask(__name__)
 
 @app.route("/")
 def homepage():
-    return render_template("homepage.html")
+    posts = [
+        {
+            "userName": "user1",
+            "title": "title1",
+            "description": "description1",
+            "video": "http://farm3.staticflickr.com/2875/9069037713_1752f5daeb.jpg",
+        },
+        {
+            "userName": "user2",
+            "title": "test_title",
+            "description": "test",
+            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
+        }
+    ]
+    return render_template("homepage.html", posts = posts)
 
 @app.route("/login")
 def login():

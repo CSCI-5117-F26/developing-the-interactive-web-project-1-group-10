@@ -51,5 +51,20 @@
             </li>
         </ul>
     </div>
+    <div>
+        {% for post in posts %}
+            <h2 class="content-subhead">{{ post.title }}</h2>
+            <h3 class="content-subhead">{{ post.userName }}</h3>
+            <p>
+                {{ post.description }}
+            </p>
+
+            <div class="pure-g">
+                <div class="pure-u-1-4">
+                    <img class="pure-img-responsive" src={{ post.video }}>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
