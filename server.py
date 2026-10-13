@@ -54,7 +54,7 @@ def homepage():
         },
     ]
 
-    category = request.args.get("category") or "following"
+    category = request.args.get("category") or "general"
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
 

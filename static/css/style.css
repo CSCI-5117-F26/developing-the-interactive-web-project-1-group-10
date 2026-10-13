@@ -83,8 +83,16 @@ body.menu-open {
 
 .profile-link {
     flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: #333;
-    font-size: 18px;
+}
+
+.profile-link .lucide {
+    width: 30px;
+    height: 30px;
+    stroke-width: 2;
 }
 
 .mission-banner {
