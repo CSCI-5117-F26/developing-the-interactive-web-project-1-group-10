@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Profile</title>
 </head>
 <body>
-    This is profile page
+    <main class="profile">
+        <img class="profile-picture" src="{{ url_for('static', filename='images/profile/peter-parker.jpg') }}" alt="Peter Parker">
+        <h1>Peter Parker</h1>
+        <p>23 million followers | 17 videos</p>
+
+        <div class="videos">
+            <div>
+                <img src="{{ url_for('static', filename='images/profile/video-1.png') }}" alt="Peter Parker video 1">
+                <p>&#9654; 1 million views</p>
+            </div>
+            <div>
+                <img src="{{ url_for('static', filename='images/profile/video-2.png') }}" alt="Peter Parker video 2">
+                <p>&#9654; 1 million views</p>
+            </div>
+            <div>
+                <img src="{{ url_for('static', filename='images/profile/video-3.png') }}" alt="Peter Parker video 3">
+                <p>&#9654; 1 million views</p>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
