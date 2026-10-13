@@ -55,6 +55,9 @@
         </ul>
     </div>
     <div>
+        <h2>Today's Mission: {{ missions[0] }}</h2>
+    </div>
+    <div>
         {% for post in posts %}
             <h2 class="content-subhead">{{ post.title }}</h2>
             <h3 class="content-subhead">{{ post.userName }}</h3>

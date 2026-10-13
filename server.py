@@ -22,7 +22,8 @@ def homepage():
             "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
         }
     ]
-    return render_template("homepage.html", posts = posts)
+    missions = ["bird", "baseball", "book", "computer"]
+    return render_template("homepage.html", posts = posts, missions = missions)
 
 @app.route("/login")
 def login():
