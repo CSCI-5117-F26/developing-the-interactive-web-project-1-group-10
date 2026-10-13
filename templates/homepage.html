@@ -1,8 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Missions{% endblock %}
+{% block title %}Homepage{% endblock %}
+
+{% block banner %}
+    {% if category != "following" %}
+        <div class="mission-banner">
+            <h2>Today's Mission: {{ mission }}</h2>
+        </div>
+    {% endif %}
+{% endblock %}
 
 {% block content %}
-<h2>Welcome to Missions</h2>
-<p>This is the homepage feed.</p>
+    {% for post in posts %}
+        {% if post.category == category %}
+            <h2 class="content-subhead">{{ post.title }}</h2>
+            <h3 class="content-subhead">{{ post.userName }}</h3>
+            <p>{{ post.description }}</p>
+            <div class="pure-g">
+                <div class="pure-u-1-4">
+                    <img class="pure-img-responsive" src="{{ post.video }}">
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

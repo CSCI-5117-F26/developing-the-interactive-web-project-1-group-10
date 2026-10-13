@@ -3,50 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Missions{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{% block title %}Missions{% endblock %}</title>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Top Navbar -->
-    <header class="top-bar">
-        <button class="menu-btn" id="menuBtn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <nav class="category-tabs">
-            <a href="#" class="tab active">Following</a>
-            <a href="#" class="tab">Category 1</a>
-            <a href="#" class="tab">Category 2</a>
-            <a href="#" class="tab">Category 3</a>
-            <a href="#" class="tab">Category 4</a>
-        </nav>
-
-        <a href="#" class="profile-link">
-            <div class="profile-avatar"></div>
-            <span class="profile-name">Name</span>
-        </a>
-    </header>
-
-    <!-- Today's Mission Banner -->
-    <div class="mission-banner">
-        <span>Today's Mission: {% block mission %}Bird{% endblock %}</span>
+    <div class="pure-menu pure-menu-horizontal top-bar">
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                <a href="#" class="pure-menu-link menu-btn">☰</a>
+                <ul class="pure-menu-children">
+                    <li class="pure-menu-item">
+                        <a href="/" class="pure-menu-link">Home</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" class="pure-menu-link">Mission Tracking</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" class="pure-menu-link">Subscriptions</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="/profile" class="pure-menu-link">Profile</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" class="pure-menu-link">Your Videos</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" class="pure-menu-link">Liked Videos</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="pure-menu-list category-tabs">
+            <li class="pure-menu-item">
+                <a href="/?category=following" class="pure-menu-link">Following</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="/?category=general" class="pure-menu-link">General</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="/?category=sport" class="pure-menu-link">Sport</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="/?category=study" class="pure-menu-link">Study</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="/?category=hobby" class="pure-menu-link">Hobby</a>
+            </li>
+        </ul>
+        <a href="/profile" class="pure-menu-link profile-link">Profile</a>
     </div>
 
-    <!-- Sidebar Menu (hidden by default) -->
-    <aside class="sidebar" id="sidebar">
-        <nav class="sidebar-nav">
-            <a href="/">Home</a>
-            <a href="/upload">Upload</a>
-            <a href="/mission">Mission Tracking</a>
-            <a href="/profile">My Profile</a>
-        </nav>
-    </aside>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    {% block banner %}{% endblock %}
 
-    <!-- Main Content -->
     <main class="content">
         {% block content %}{% endblock %}
     </main>
