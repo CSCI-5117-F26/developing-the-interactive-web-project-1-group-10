@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Homepage</title>
 </head>
 <body>
@@ -22,7 +23,7 @@
                         <a href="#" class="pure-menu-link">Subscriptions</a>
                     </li>
                     <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Profile</a>
+                        <a href="{{ url_for('profile') }}" class="pure-menu-link">Profile</a>
                     </li>
                     <li class="pure-menu-item">
                         <a href="#" class="pure-menu-link">Your Videos</a>
@@ -49,10 +50,10 @@
             <li class="pure-menu-item">
                 <a href="#" class="pure-menu-link">Category 4</a>
             </li>
-            <li class="pure-menu-item">
-                <a href="/profile" class="pure-menu-link">Profile</a>
-            </li>
         </ul>
+        <a href="{{ url_for('profile') }}" class="profile-icon">
+            <img src="{{ url_for('static', filename='images/profile-circle.svg') }}" alt="Profile">
+        </a>
     </div>
     <div>
         {% for post in posts %}
