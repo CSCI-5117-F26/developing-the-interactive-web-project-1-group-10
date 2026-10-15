@@ -30,7 +30,7 @@ oauth.register(
 
 @app.route("/")
 def index():
-  if "username" in session:
+  if "user" in session:
     return render_template("homepage.html")
   return render_template("login.html")
 
@@ -42,9 +42,9 @@ def callback():
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
     # The app assumes for a /profile path to be available, change here if it's not
-    return redirect("/")
+    return redirect("/homepage")
 
-@app.route("/login")
+@app.route("/login", methods=["POST"])
 def login():
     """
     Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)

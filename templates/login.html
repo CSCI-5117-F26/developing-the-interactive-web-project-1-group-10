@@ -6,11 +6,13 @@
     <title>Login</title>
 </head>
 <body>
+  <form action="/login" method="POST">
     <label for="username">Username</label>
     <input name="username" id="username" required/>
-    <label for="password">Username</label>
+    <label for="password">Password</label>
     <input type="password" name="password" id="password" required/>
-    <button>Login</button>
+    <button type="submit">Login</button>
+  </form>
     <a href="{{ url_for("signup")}}">Signup</a>
 </body>
 </html>
