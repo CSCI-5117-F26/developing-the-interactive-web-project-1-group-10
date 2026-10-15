@@ -14,6 +14,10 @@ def index():
     return render_template("homepage.html")
   return render_template("login.html")
 
+@app.route("/signup")
+def signup():
+  return render_template("signup.html")
+
 @app.route("/homepage")
 def homepage():
     category = request.args.get("category") or "general"

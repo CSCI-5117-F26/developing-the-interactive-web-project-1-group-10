@@ -6,6 +6,11 @@
     <title>Login</title>
 </head>
 <body>
-    Login!
+    <label for="username">Username</label>
+    <input name="username" id="username" required/>
+    <label for="password">Username</label>
+    <input type="password" name="password" id="password" required/>
+    <button>Login</button>
+    <a href="{{ url_for("signup")}}">Signup</a>
 </body>
 </html>
