@@ -92,8 +92,8 @@ No options meatball menue for other users, clicking a video should bring you bac
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries. or libraries that are mentioned in the product requirements**
 
-* Library or service name: description of use
-* ...
+* [weather-effects-js](https://github.com/c3nk/weather-effects-js) 1.0.1: renders the animated sun, cloud, rain, snow, fog, and lightning background effects. The project declares an MIT license.
+* [Open-Meteo](https://open-meteo.com/): its free non-commercial API provides the daily Minneapolis WMO weather code that selects the background effect. Weather data is licensed under CC BY 4.0.
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that

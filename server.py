@@ -3,10 +3,17 @@ import os
 from dotenv import load_dotenv
 
 from database import get_videos_by_category
+from weather import get_minneapolis_weather
 
 load_dotenv()
 
 app = Flask(__name__)
+
+
+@app.context_processor
+def inject_weather():
+    return {"weather": get_minneapolis_weather()}
+
 
 @app.route("/")
 def index():

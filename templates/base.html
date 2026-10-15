@@ -10,6 +10,16 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <div
+        id="weatherBackground"
+        class="weather-background"
+        data-weather-effect="{{ weather.effect }}"
+        data-weather-intensity="{{ weather.intensity }}"
+        data-weather-density="{{ weather.density }}"
+        data-weather-mode="{{ weather.mode }}"
+        aria-hidden="true"
+    ></div>
+
     <div class="pure-menu pure-menu-horizontal top-bar">
         <button
             id="menuBtn"
@@ -57,18 +67,18 @@
                 class="pure-button menu-btn sidebar-close"
                 type="button"
                 aria-label="Close menu"
-            ><i data-lucide="menu" aria-hidden="true">☰</i></button>
+            ><i data-lucide="menu" aria-hidden="true"></i></button>
         </div>
 
         <ul class="pure-menu-list sidebar-list">
             <li class="pure-menu-item">
-                <a href="/" class="pure-menu-link"><i data-lucide="house" class="sidebar-icon" aria-hidden="true">⌂</i>Home</a>
+                <a href="/" class="pure-menu-link"><i data-lucide="house" class="sidebar-icon" aria-hidden="true"></i>Home</a>
             </li>
             <li class="pure-menu-item">
-                <a href="#" class="pure-menu-link"><i data-lucide="clipboard-check" class="sidebar-icon" aria-hidden="true">◷</i>Mission Tracking</a>
+                <a href="#" class="pure-menu-link"><i data-lucide="clipboard-check" class="sidebar-icon" aria-hidden="true"></i>Mission Tracking</a>
             </li>
             <li class="pure-menu-item sidebar-divider">
-                <a href="#" class="pure-menu-link"><i data-lucide="star" class="sidebar-icon" aria-hidden="true">☆</i>Subscriptions</a>
+                <a href="#" class="pure-menu-link"><i data-lucide="star" class="sidebar-icon" aria-hidden="true"></i>Subscriptions</a>
             </li>
         </ul>
 
@@ -76,16 +86,17 @@
             <p class="sidebar-heading">YOU</p>
             <ul class="pure-menu-list sidebar-list">
                 <li class="pure-menu-item">
-                    <a href="/profile" class="pure-menu-link"><i data-lucide="user-round" class="sidebar-icon" aria-hidden="true">♙</i>Profile</a>
+                    <a href="/profile" class="pure-menu-link"><i data-lucide="user-round" class="sidebar-icon" aria-hidden="true"></i>Profile</a>
                 </li>
                 <li class="pure-menu-item">
-                    <a href="#" class="pure-menu-link"><i data-lucide="square-play" class="sidebar-icon" aria-hidden="true">▷</i>Your Videos</a>
+                    <a href="#" class="pure-menu-link"><i data-lucide="square-play" class="sidebar-icon" aria-hidden="true"></i>Your Videos</a>
                 </li>
                 <li class="pure-menu-item">
-                    <a href="#" class="pure-menu-link"><i data-lucide="heart" class="sidebar-icon" aria-hidden="true">♡</i>Liked Videos</a>
+                    <a href="#" class="pure-menu-link"><i data-lucide="heart" class="sidebar-icon" aria-hidden="true"></i>Liked Videos</a>
                 </li>
             </ul>
         </div>
+        
     </aside>
 
     {% block banner %}{% endblock %}
@@ -94,7 +105,12 @@
         {% block content %}{% endblock %}
     </main>
 
+    <footer class="weather-credit">
+        Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>
+    </footer>
+
     <script src="https://unpkg.com/lucide@1.55.0/dist/umd/lucide.min.js"></script>
+    <script src="{{ url_for('static', filename='js/vendor/weather-effects-js-1.0.1.umd.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
