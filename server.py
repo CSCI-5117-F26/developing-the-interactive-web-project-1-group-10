@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for, seesion
+from flask import Flask, redirect, render_template, request, url_for, session
 import os
 from dotenv import load_dotenv
 
@@ -9,6 +9,12 @@ load_dotenv()
 app = Flask(__name__)
 
 @app.route("/")
+def index():
+  if "username" in session:
+    return render_template("homepage.html")
+  return render_template("login.html")
+
+@app.route("/homepage")
 def homepage():
     category = request.args.get("category") or "general"
 
@@ -80,10 +86,6 @@ def homepage():
 
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
 
 @app.route("/profile")
 def profile():
