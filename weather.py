@@ -1,4 +1,5 @@
 import json
+import random
 from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlencode
@@ -9,6 +10,7 @@ OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 MINNEAPOLIS_LATITUDE = 44.9778
 MINNEAPOLIS_LONGITUDE = -93.2650
 MINNEAPOLIS_TIMEZONE = ZoneInfo("America/Chicago")
+RANDOM_WEATHER_CODES = (0, 0, 0, 2, 2, 2, 51, 61, 81, 71, 75, 77, 85, 95, 96, 99)
 
 
 def _effect_for_weather_code(code):
@@ -23,7 +25,7 @@ def _effect_for_weather_code(code):
         return "rain", intensity, 5
     if code in {71, 73, 75, 77, 85, 86}:
         intensity = 50 if code in {75, 86} else 30
-        return "snow", intensity, 5
+        return "snow", intensity, 20
     if code in {95, 96, 99}:
         return "thunderstorm", 45, 5
     return "none", 0, 0
@@ -77,3 +79,20 @@ def get_minneapolis_weather():
         return _fetch_minneapolis_weather(hour_key)
     except (OSError, ValueError, KeyError, IndexError, TypeError):
         return _fallback_weather(now)
+
+
+def get_random_weather(excluded_effect):
+    choices = [
+        weather
+        for code in RANDOM_WEATHER_CODES
+        if (weather := _effect_for_weather_code(code))[0] != excluded_effect
+    ]
+    effect, intensity, density = random.choice(choices)
+    now = datetime.now(MINNEAPOLIS_TIMEZONE)
+
+    return {
+        "effect": effect,
+        "intensity": intensity,
+        "density": density,
+        "mode": "day" if 7 <= now.hour < 19 else "night",
+    }

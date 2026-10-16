@@ -49,6 +49,58 @@ body {
     background: #f5f5f5;
 }
 
+.weather-background[data-weather-effect="none"] {
+    background: #f5f5f5;
+}
+
+.weather-background[data-weather-effect="sun"] {
+    background: linear-gradient(
+        180deg,
+        #fff4cf 0%,
+        #f5f5f5 72%
+    );
+}
+
+.weather-background[data-weather-effect="cloudy"] {
+    background: linear-gradient(
+        180deg,
+        #dce5ea 0%,
+        #f5f5f5 72%
+    );
+}
+
+.weather-background[data-weather-effect="rain"] {
+    background: linear-gradient(
+        180deg,
+        #cfd9e2 0%,
+        #eef1f3 72%
+    );
+}
+
+.weather-background[data-weather-effect="snow"] {
+    background: linear-gradient(
+        180deg,
+        #323739 0%,
+        #f7f9fa 72%
+    );
+}
+
+.weather-background[data-weather-effect="fog"] {
+    background: linear-gradient(
+        180deg,
+        #d8dede 0%,
+        #f1f2f2 72%
+    );
+}
+
+.weather-background[data-weather-effect="thunderstorm"] {
+    background: linear-gradient(
+        180deg,
+        #8d9aaa 0%,
+        #d8dde2 72%
+    );
+}
+
 .weather-background {
     position: fixed;
     inset: 0;
