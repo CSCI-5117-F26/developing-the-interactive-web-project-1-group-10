@@ -2,10 +2,40 @@ const menuBtn = document.getElementById('menuBtn');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebarOverlay');
 const closeBtn = document.getElementById('sidebarClose');
+const weatherBackground = document.getElementById('weatherBackground');
+
+const startWeatherEffects = () => {
+    if (!weatherBackground || !window.WeatherEffectsJS) {
+        return;
+    }
+
+    const effect = weatherBackground.dataset.weatherEffect;
+
+    if (effect === 'none') {
+        return;
+    }
+
+    const options = {
+        container: weatherBackground,
+        intensity: Number(weatherBackground.dataset.weatherIntensity),
+        density: Number(weatherBackground.dataset.weatherDensity),
+        mode: weatherBackground.dataset.weatherMode === 'night' ? 'night' : 'day',
+    };
+
+    if (effect === 'thunderstorm') {
+        window.WeatherEffectsJS.mountRain(options);
+        window.WeatherEffectsJS.mountLightning(options);
+        return;
+    }
+
+    window.WeatherEffectsJS.createWeatherEffect(effect, options);
+};
 
 if (window.lucide) {
     window.lucide.createIcons();
 }
+
+startWeatherEffects();
 
 if (menuBtn && sidebar && overlay && closeBtn) {
     let isOpen = false;

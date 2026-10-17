@@ -5,10 +5,32 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 
 from database import get_videos_by_category
+from weather import get_minneapolis_weather, get_random_weather
 
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY") or os.urandom(24)
+
+
+@app.context_processor
+def inject_weather():
+    weather = session.get("weather_override") or get_minneapolis_weather()
+    return {"weather": weather}
+
+
+@app.route("/weather/random")
+def change_weather_random():
+    current_weather = session.get("weather_override") or get_minneapolis_weather()
+    session["weather_override"] = get_random_weather(current_weather["effect"])
+    return redirect(url_for("homepage"))
+
+
+@app.route("/weather/auto")
+def change_weather_auto():
+    session.pop("weather_override", None)
+    return redirect(url_for("homepage"))
+
 
 app.secret_key = os.environ["FLASK_SECRET"]
 
