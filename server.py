@@ -13,6 +13,23 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY") or os.urandom(24)
 
+class AuthError(Exception):
+  def __init__(self, error, status_code):
+    self.error = error
+    self.status_code = status_code
+
+def requires_auth(f):
+  """
+  Use on routes that require a valid session, otherwise it aborts with a 403
+  """
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    if session.get("user") is None:
+      return redirect(url_for("login"))
+
+    return f(*args, **kwargs)
+
+  return decorated
 
 @app.context_processor
 def inject_weather():
@@ -67,7 +84,7 @@ def callback():
     # The app assumes for a /profile path to be available, change here if it's not
     return redirect("/homepage")
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     """
     Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
@@ -87,6 +104,7 @@ def signup():
     )
 
 @app.route("/logout")
+@requires_auth
 def logout():
   session.clear()
   return redirect(
@@ -102,6 +120,7 @@ def logout():
   )
 
 @app.route("/homepage")
+@requires_auth
 def homepage():
     category = request.args.get("category") or "general"
 
@@ -175,10 +194,12 @@ def homepage():
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
 
 @app.route("/profile")
+@requires_auth
 def profile():
     return render_template("profile_own.html")
 
 @app.route("/profile_other")
+@requires_auth
 def profile_other():
     return render_template("profile_other.html")
 
