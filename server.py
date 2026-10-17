@@ -3,6 +3,7 @@ from flask import Flask, redirect, render_template, request, url_for, session
 import os
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
+from urllib.parse import quote_plus, urlencode
 
 from database import get_videos_by_category
 from weather import get_minneapolis_weather, get_random_weather
@@ -77,7 +78,28 @@ def login():
 
 @app.route("/signup")
 def signup():
-  return render_template("signup.html")
+    """
+    Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
+    """
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True),
+        screen_hint="signup"
+    )
+
+@app.route("/logout")
+def logout():
+  session.clear()
+  return redirect(
+    "https://" + domain
+    + "/v2/logout?"
+    + urlencode(
+      {
+        "returnTo": url_for("index", _external=True),
+        "client_id": client_id,
+      },
+      quote_via=quote_plus
+    )
+  )
 
 @app.route("/homepage")
 def homepage():
