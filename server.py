@@ -81,13 +81,11 @@ def callback():
     Callback redirect from Auth0
     """
     token = oauth.auth0.authorize_access_token()
-    print(f"Token: {token}")
     userinfo = token.get("userinfo")
 
     sub_id = userinfo["sub"]
     name = userinfo["name"]
     email = userinfo["email"]
-    print(f"sub_id: {sub_id}, name: {name}, email: {email}")
 
     with get_connection() as conn:
       with conn.cursor() as cur:
@@ -95,8 +93,8 @@ def callback():
         user = cur.fetchone()
 
         if user:
-          user_id = user.user_id
-          username = user.username
+            user_id = user["user_id"]
+            username = user["username"]
         else:
           username = name
           cur.execute(
