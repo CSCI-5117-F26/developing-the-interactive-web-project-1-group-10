@@ -88,7 +88,7 @@ def _fetch_minneapolis_weather(_hour_key):
         headers={"User-Agent": "Missions student web app"},
     )
 
-    with urlopen(request, timeout=3) as response:
+    with urlopen(request, timeout=30) as response:
         forecast = json.load(response)
 
     code = int(forecast["daily"]["weather_code"][0])
