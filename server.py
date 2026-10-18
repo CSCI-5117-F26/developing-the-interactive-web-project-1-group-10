@@ -89,8 +89,8 @@ def callback():
     print(f"sub_id: {sub_id}, name: {name}, email: {email}")
 
     with get_connection() as conn:
-      with conn.cursor() as curr:
-        cur.execute("SELECT id, username FROM users WHERE auth0_id = %s;", (sub_id,))
+      with conn.cursor() as cur:
+        cur.execute("SELECT user_id, username FROM users WHERE auth0_id = %s;", (sub_id,))
         user = cur.fetchone()
 
         if user:
@@ -102,11 +102,11 @@ def callback():
             """
             INSERT INTO users (auth0_id, username, email)
             VALUES (%s, %s, %s)
-            RETURNING id;
+            RETURNING user_id;
             """,
             (sub_id, username, email)
           )
-          user_id = cur.fetchone()[0]
+          user_id = cur.fetchone()
           conn.commit()
 
     session["user"] = token

@@ -3,7 +3,7 @@ CREATE TABLE users (
   auth0_id VARCHAR(128) UNIQUE NOT NULL,
   username VARCHAR(80) NOT NULL,
   email VARCHAR(256) NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE videos (
@@ -41,12 +41,12 @@ CREATE TABLE video_likes (
   video_id INT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  PRIMARY KEY (user_id, post_id),
+  PRIMARY KEY (user_id, video_id),
   CONSTRAINT fk_post_like_user
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON DELETE CASCADE,
 
   CONSTRAINT fk_post_like_post
     FOREIGN KEY (video_id) REFERENCES videos(video_id)
-    ON DELETE CASCADE,
+    ON DELETE CASCADE
 );
