@@ -5,6 +5,9 @@ from functools import lru_cache
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
+import logging
+
+logger = logging.getLogger(__name__)
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 # {
@@ -109,6 +112,7 @@ def get_minneapolis_weather():
     try:
         return _fetch_minneapolis_weather(hour_key)
     except (OSError, ValueError, KeyError, IndexError, TypeError):
+        logger.exception("Failed to fetch weather from Open-Meteo")
         return _fallback_weather(now)
 
 
