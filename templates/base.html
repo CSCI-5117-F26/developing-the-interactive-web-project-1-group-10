@@ -32,20 +32,15 @@
 
         <ul class="pure-menu-list category-tabs">
             <li class="pure-menu-item">
-                <a href="/?category=following" class="pure-menu-link{% if category == 'following' %} active{% endif %}">Following</a>
-            </li>
+                <a href="{{ url_for('homepage', category='following') }}"class="pure-menu-link{% if category == 'following' %} active{% endif %}">Following</a></li>
             <li class="pure-menu-item">
-                <a href="/?category=general" class="pure-menu-link{% if category == 'general' %} active{% endif %}">General</a>
-            </li>
+                <a href="{{ url_for('homepage', category='general') }}"class="pure-menu-link{% if category == 'general' %} active{% endif %}">General</a></li>
             <li class="pure-menu-item">
-                <a href="/?category=sport" class="pure-menu-link{% if category == 'sport' %} active{% endif %}">Sport</a>
-            </li>
+                <a href="{{ url_for('homepage', category='sport') }}"class="pure-menu-link{% if category == 'sport' %} active{% endif %}">Sport</a></li>
             <li class="pure-menu-item">
-                <a href="/?category=study" class="pure-menu-link{% if category == 'study' %} active{% endif %}">Study</a>
-            </li>
+                <a href="{{ url_for('homepage', category='study') }}"class="pure-menu-link{% if category == 'study' %} active{% endif %}">Study</a></li>
             <li class="pure-menu-item">
-                <a href="/?category=hobby" class="pure-menu-link{% if category == 'hobby' %} active{% endif %}">Hobby</a>
-            </li>
+                <a href="{{ url_for('homepage', category='hobby') }}"class="pure-menu-link{% if category == 'hobby' %} active{% endif %}">Hobby</a></li>
         </ul>
         <a href="/profile" class="pure-menu-link profile-link" aria-label="Profile" title="Profile">
             <i data-lucide="user-round" aria-hidden="true">♙</i>
@@ -72,7 +67,7 @@
 
         <ul class="pure-menu-list sidebar-list">
             <li class="pure-menu-item">
-                <a href="/" class="pure-menu-link"><i data-lucide="house" class="sidebar-icon" aria-hidden="true"></i>Home</a>
+                <a href="{{ url_for('homepage', category='general') }}" class="pure-menu-link"><i data-lucide="house" class="sidebar-icon" aria-hidden="true"></i>Home</a>
             </li>
             <li class="pure-menu-item">
                 <a href="#" class="pure-menu-link"><i data-lucide="clipboard-check" class="sidebar-icon" aria-hidden="true"></i>Mission Tracking</a>

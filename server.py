@@ -70,9 +70,10 @@ oauth.register(
 
 @app.route("/")
 def index():
-  if "user" in session:
-    return render_template("homepage.html")
-  return render_template("login.html")
+    if "user" in session:
+        return redirect(url_for("homepage"))
+
+    return render_template("login.html")
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
