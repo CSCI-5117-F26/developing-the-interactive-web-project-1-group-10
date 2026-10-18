@@ -6,7 +6,25 @@ from psycopg.rows import dict_row
 
 load_dotenv()
 
+def create_users_table():
+    with get_connection() as conn:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                user_id BIGSERIAL PRIMARY KEY,
+                auth0_id TEXT UNIQUE NOT NULL,
+                username VARCHAR(80) NOT NULL,
+                email TEXT UNIQUE,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
 
+def initialize_database():
+    create_users_table()
+    create_videos_table()
+    
+    
 def get_connection():
     database_url = os.getenv("DATABASE_URL")
 
