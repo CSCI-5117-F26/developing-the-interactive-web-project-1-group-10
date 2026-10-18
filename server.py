@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 
-from database import get_videos_by_category, get_connection
-from weather import get_minneapolis_weather, get_random_weather
+from database import get_videos_by_category, get_connection, create_user
+from weather import get_random_weather
 
 load_dotenv()
 
@@ -33,14 +33,23 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    weather = session.get("weather_override") or get_minneapolis_weather()
-    return {"weather": weather}
+    if request.endpoint not in {"homepage", "profile", "profile_other"}:
+        return {}
+
+    weather = session.get("weather_override")
+    weather_auto = weather is None
+
+    if weather_auto:
+        weather = {"effect": "none", "intensity": 0, "density": 0, "mode": "day"}
+
+    return {"weather": weather, "weather_auto": weather_auto}
 
 
 @app.route("/weather/random")
 def change_weather_random():
-    current_weather = session.get("weather_override") or get_minneapolis_weather()
-    session["weather_override"] = get_random_weather(current_weather["effect"])
+    current_weather = session.get("weather_override")
+    excluded_effect = current_weather["effect"] if current_weather else None
+    session["weather_override"] = get_random_weather(excluded_effect)
     return redirect(url_for("homepage"))
 
 
@@ -70,9 +79,10 @@ oauth.register(
 
 @app.route("/")
 def index():
-  if "user" in session:
-    return render_template("homepage.html")
-  return render_template("login.html")
+    if "user" in session:
+        return redirect(url_for("homepage"))
+
+    return render_template("login.html")
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
@@ -80,34 +90,13 @@ def callback():
     Callback redirect from Auth0
     """
     token = oauth.auth0.authorize_access_token()
-    print(f"Token: {token}")
     userinfo = token.get("userinfo")
 
     sub_id = userinfo["sub"]
     name = userinfo["name"]
     email = userinfo["email"]
-    print(f"sub_id: {sub_id}, name: {name}, email: {email}")
 
-    with get_connection() as conn:
-      with conn.cursor() as cur:
-        cur.execute("SELECT user_id, username FROM users WHERE auth0_id = %s;", (sub_id,))
-        user = cur.fetchone()
-
-        if user:
-          user_id = user.user_id
-          username = user.username
-        else:
-          username = name
-          cur.execute(
-            """
-            INSERT INTO users (auth0_id, username, email)
-            VALUES (%s, %s, %s)
-            RETURNING user_id;
-            """,
-            (sub_id, username, email)
-          )
-          user_id = cur.fetchone()
-          conn.commit()
+    create_user(sub_id, name, email)
 
     session["user"] = token
     # The app assumes for a /profile path to be available, change here if it's not
