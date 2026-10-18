@@ -33,6 +33,9 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
+    if request.endpoint not in {"homepage", "profile", "profile_other"}:
+        return {}
+
     weather = session.get("weather_override") or get_minneapolis_weather()
     return {"weather": weather}
 
