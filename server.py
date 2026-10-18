@@ -6,7 +6,7 @@ from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 
 from database import get_videos_by_category, get_connection
-from weather import get_minneapolis_weather, get_random_weather
+from weather import get_random_weather
 
 load_dotenv()
 
@@ -36,14 +36,20 @@ def inject_weather():
     if request.endpoint not in {"homepage", "profile", "profile_other"}:
         return {}
 
-    weather = session.get("weather_override") or get_minneapolis_weather()
-    return {"weather": weather}
+    weather = session.get("weather_override")
+    weather_auto = weather is None
+
+    if weather_auto:
+        weather = {"effect": "none", "intensity": 0, "density": 0, "mode": "day"}
+
+    return {"weather": weather, "weather_auto": weather_auto}
 
 
 @app.route("/weather/random")
 def change_weather_random():
-    current_weather = session.get("weather_override") or get_minneapolis_weather()
-    session["weather_override"] = get_random_weather(current_weather["effect"])
+    current_weather = session.get("weather_override")
+    excluded_effect = current_weather["effect"] if current_weather else None
+    session["weather_override"] = get_random_weather(excluded_effect)
     return redirect(url_for("homepage"))
 
 
