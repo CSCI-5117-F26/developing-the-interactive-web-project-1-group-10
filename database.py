@@ -15,6 +15,24 @@ def get_connection():
 
     return psycopg.connect(database_url, row_factory=dict_row)
 
+def create_user(sub_id, username, email):
+  with get_connection() as conn:
+    conn.execute("SELECT user_id, username FROM users WHERE auth0_id = %s;", (sub_id,))
+    user = cur.fetchone()
+
+    if user:
+        user_id = user["user_id"]
+        username = user["username"]
+        return None
+    else:
+      return conn.execute(
+        """
+        INSERT INTO users (auth0_id, username, email)
+        VALUES (%s, %s, %s)
+        RETURNING user_id;
+        """,
+        (sub_id, username, email)
+      ).fetchone()
 
 def create_videos_table():
     with get_connection() as conn:
