@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 
-from database import get_videos_by_category
+from database import get_videos_by_category, get_connection
 from weather import get_minneapolis_weather, get_random_weather
 
 load_dotenv()
@@ -80,6 +80,35 @@ def callback():
     Callback redirect from Auth0
     """
     token = oauth.auth0.authorize_access_token()
+    print(f"Token: {token}")
+    userinfo = token.get("userinfo")
+
+    sub_id = userinfo["sub"]
+    name = userinfo["name"]
+    email = userinfo["email"]
+    print(f"sub_id: {sub_id}, name: {name}, email: {email}")
+
+    with get_connection() as conn:
+      with conn.cursor() as curr:
+        cur.execute("SELECT id, username FROM users WHERE auth0_id = %s;", (sub_id,))
+        user = cur.fetchone()
+
+        if user:
+          user_id = user.user_id
+          username = user.username
+        else:
+          username = name
+          cur.execute(
+            """
+            INSERT INTO users (auth0_id, username, email)
+            VALUES (%s, %s, %s)
+            RETURNING id;
+            """,
+            (sub_id, username, email)
+          )
+          user_id = cur.fetchone()[0]
+          conn.commit()
+
     session["user"] = token
     # The app assumes for a /profile path to be available, change here if it's not
     return redirect("/homepage")
