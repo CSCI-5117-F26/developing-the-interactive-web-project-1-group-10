@@ -87,6 +87,17 @@ def get_videos_by_category(category):
             (category,),
         ).fetchall()
 
+def get_users_by_id(user_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT *
+            FROM users
+            WHERE user_id = %s
+            """,
+            (user_id,),
+        ).fetchone()
+
 
 if __name__ == "__main__":
     create_videos_table()

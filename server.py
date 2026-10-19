@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 
-from database import get_videos_by_category, get_connection
+from database import get_videos_by_category, get_connection, get_users_by_id
 from weather import get_random_weather
 
 load_dotenv()
@@ -161,41 +161,13 @@ def logout():
 def homepage():
     category = request.args.get("category") or "general"
 
-    posts = [
-        {
-            "userName": "user1",
-            "title": "title1",
-            "category": "sport",
-            "description": "description1",
-            "video": "http://farm3.staticflickr.com/2875/9069037713_1752f5daeb.jpg",
-        },
-        {
-            "userName": "user2",
-            "title": "test_title",
-            "category": "study",
-            "description": "test",
-            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
-        },
-        {
-            "userName": "user3",
-            "title": "bird!!",
-            "category": "general",
-            "description": "Look at this bird!!!",
-            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
-        },
-        {
-            "userName": "user4",
-            "title": "bird!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-            "category": "general",
-            "description": "Look at this bird!!!",
-            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
-        }
-    ]
+    posts = []
 
     database_videos = get_videos_by_category(category)
+    print(database_videos)
     posts.extend(
         {
-            "userName": video["username"],
+            "userName": get_users_by_id(video["author_id"])["username"],
             "title": video["title"],
             "category": video["category"],
             "description": video["description"],
