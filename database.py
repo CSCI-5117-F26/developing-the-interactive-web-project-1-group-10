@@ -87,6 +87,18 @@ def get_videos_by_category(category):
             (category,),
         ).fetchall()
 
+def get_videos_by_id(user_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT *
+            FROM videos
+            WHERE author_id = %s
+            ORDER BY created_at DESC
+            """,
+            (user_id,),
+        ).fetchall()
+
 def get_users_by_id(user_id):
     with get_connection() as conn:
         return conn.execute(

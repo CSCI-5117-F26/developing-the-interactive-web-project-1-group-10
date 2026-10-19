@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 
-from database import get_videos_by_category, get_connection, get_users_by_id
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id
 from weather import get_random_weather
 
 load_dotenv()
@@ -117,7 +117,9 @@ def callback():
           user_id = cur.fetchone()
           conn.commit()
 
-    session["user"] = token
+    session["user"] = {
+       "user_id": user_id
+    }
     # The app assumes for a /profile path to be available, change here if it's not
     return redirect("/homepage")
 
@@ -164,10 +166,10 @@ def homepage():
     posts = []
 
     database_videos = get_videos_by_category(category)
-    print(database_videos)
     posts.extend(
         {
             "userName": get_users_by_id(video["author_id"])["username"],
+            "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
             "description": video["description"],
@@ -205,12 +207,18 @@ def homepage():
 @app.route("/profile")
 @requires_auth
 def profile():
-    return render_template("profile_own.html")
+    my_id = session["user"]["user_id"]
+    my_info = get_users_by_id(my_id)
+    posts = get_videos_by_id(my_id)
+    return render_template("profile_own.html", my_info=my_info, posts=posts)
 
-@app.route("/profile_other")
+@app.route("/profile_other", methods=["GET"])
 @requires_auth
 def profile_other():
-    return render_template("profile_other.html")
+    user_id = request.args.get("user_id")
+    user_info = get_users_by_id(user_id)
+    posts = get_videos_by_id(user_id)
+    return render_template("profile_other.html", user_info=user_info, posts=posts)
 
 if __name__ == "__main__":
     app.run(debug=True)

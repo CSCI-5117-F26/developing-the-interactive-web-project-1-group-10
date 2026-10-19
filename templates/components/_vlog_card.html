@@ -1,5 +1,5 @@
 <article class="post-item">
-    <a href="{{ url_for('profile_other') }}" class="post-user">
+    <a href="{{ url_for('profile_other', user_id=post.author_id) }}" class="post-user">
         <div class="post-avatar" aria-hidden="true">
             <i data-lucide="user-round"></i>
         </div>
@@ -11,8 +11,8 @@
             <i data-lucide="ellipsis" aria-hidden="true"></i>
         </button>
 
-        <div class="post-media">
-            <img src="{{ post.video }}" alt="{{ post.title }}">
+        <div>
+            <video class="post-media" src="{{ post.video }}" alt="{{ post.title }}" controls></video>
         </div>
 
         <div class="post-copy">
