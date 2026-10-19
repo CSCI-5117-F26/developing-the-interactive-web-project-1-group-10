@@ -18,6 +18,10 @@ class AuthError(Exception):
     self.error = error
     self.status_code = status_code
 
+def get_current_user_id():
+    user = session.get("user")
+    return user.get("user_id") if user else None
+
 def requires_auth(f):
   """
   Use on routes that require a valid session, otherwise it aborts with a 403
@@ -114,7 +118,7 @@ def callback():
             """,
             (sub_id, username, email)
           )
-          user_id = cur.fetchone()
+          user_id = cur.fetchone()["user_id"]
           conn.commit()
 
     session["user"] = {
@@ -168,6 +172,7 @@ def homepage():
     database_videos = get_videos_by_category(category)
     posts.extend(
         {
+            "video_id": video["video_id"],
             "userName": get_users_by_id(video["author_id"])["username"],
             "author_id": video["author_id"],
             "title": video["title"],
@@ -207,7 +212,7 @@ def homepage():
 @app.route("/profile")
 @requires_auth
 def profile():
-    my_id = session["user"]["user_id"]
+    my_id = get_current_user_id()
     my_info = get_users_by_id(my_id)
     posts = get_videos_by_id(my_id)
     return render_template("profile_own.html", my_info=my_info, posts=posts)
