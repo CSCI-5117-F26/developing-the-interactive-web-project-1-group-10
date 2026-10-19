@@ -515,6 +515,12 @@ body.menu-open {
     gap: 8px;
 }
 
+.post-actions .like-count {
+    flex: 0 0 4ch;
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+}
+
 .post-actions button {
     display: inline-flex;
     align-items: center;
@@ -538,6 +544,14 @@ body.menu-open {
     width: 30px;
     height: 30px;
     stroke-width: 2;
+}
+
+.post-actions .like-button[aria-pressed="true"] {
+    color: #b42318;
+}
+
+.post-actions .like-button[aria-pressed="true"] .lucide {
+    fill: currentColor;
 }
 
 @media (max-width: 680px) {

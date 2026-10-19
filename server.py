@@ -4,8 +4,9 @@ import os
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
+from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state
 from weather import get_random_weather
 
 load_dotenv()
@@ -166,13 +167,17 @@ def logout():
 @requires_auth
 def homepage():
     category = request.args.get("category") or "general"
+    if "csrf_token" not in session:
+        session["csrf_token"] = token_urlsafe(32)
 
     posts = []
 
-    database_videos = get_videos_by_category(category)
+    database_videos = get_videos_by_category(category, get_current_user_id())
     posts.extend(
         {
             "video_id": video["video_id"],
+            "liked": video["liked"],
+            "like_count": video["like_count"],
             "userName": get_users_by_id(video["author_id"])["username"],
             "author_id": video["author_id"],
             "title": video["title"],
@@ -208,6 +213,37 @@ def homepage():
 
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
+
+@app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
+def video_like(video_id):
+    user_id = get_current_user_id()
+    if user_id is None:
+        return {"error": "Please log in to like videos."}, 401
+
+    csrf_token = session.get("csrf_token")
+    if not csrf_token or not compare_digest(csrf_token.encode(), request.headers.get("X-CSRF-Token", "").encode()):
+        return {"error": "Please refresh the page and try again."}, 403
+
+    with get_connection() as conn:
+        exists = conn.execute(
+            """
+            SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s) AS user_exists,
+                   EXISTS (SELECT 1 FROM videos WHERE video_id = %s) AS video_exists
+            """,
+            (user_id, video_id),
+        ).fetchone()
+
+    if not exists["user_exists"]:
+        return {"error": "Please log in again."}, 401
+    if not exists["video_exists"]:
+        return {"error": "This video is no longer available."}, 404
+
+    if request.method == "POST":
+        like_video(user_id, video_id)
+    else:
+        unlike_video(user_id, video_id)
+
+    return get_video_like_state(user_id, video_id)
 
 @app.route("/profile")
 @requires_auth

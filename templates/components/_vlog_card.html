@@ -21,9 +21,17 @@
         </div>
 
         <div class="post-actions" aria-label="Post actions">
-            <button type="button" aria-label="Like">
+            <button
+                class="like-button"
+                type="button"
+                aria-label="{{ 'Unlike' if post.liked else 'Like' }}"
+                aria-pressed="{{ 'true' if post.liked else 'false' }}"
+                data-like-url="{{ url_for('video_like', video_id=post.video_id) }}"
+                data-csrf-token="{{ session.get('csrf_token', '') }}"
+            >
                 <i data-lucide="heart" aria-hidden="true"></i>
             </button>
+            <span class="like-count" aria-live="polite" data-count="{{ post.like_count }}">{{ '999+' if post.like_count > 999 else post.like_count }}</span>
             <button type="button" aria-label="Comment">
                 <i data-lucide="message-circle" aria-hidden="true"></i>
             </button>
@@ -31,5 +39,6 @@
                 <i data-lucide="arrow-up-right" aria-hidden="true"></i>
             </button>
         </div>
+        <p class="like-error" role="status" hidden></p>
     </div>
 </article>
