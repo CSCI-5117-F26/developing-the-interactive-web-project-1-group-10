@@ -39,7 +39,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "profile_other"}:
+    if request.endpoint not in {"homepage", "profile", "profile_other", "upload"}:
         return {}
 
     weather = session.get("weather_override")
@@ -197,6 +197,11 @@ def homepage():
 
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
+
+@app.route("/upload")
+@requires_auth
+def upload():
+  return render_template("upload.html")
 
 @app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
 def video_like(video_id):
