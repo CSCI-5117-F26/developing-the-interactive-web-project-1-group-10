@@ -25,9 +25,11 @@
     ></div>
 
     <div class="pure-menu pure-menu-horizontal top-bar">
-      {% include "components/_menu_btn.html" %}
-      {% include "components/_category_tabs.html" %}
-      {% include "components/_profile_link.html" %}
+      {% block top_bar %}
+        {% include "components/_menu_btn.html" %}
+        {% include "components/_category_tabs.html" %}
+        {% include "components/_profile_link.html" %}
+      {% endblock %}
     </div>
 
     {% block banner %}{% endblock %}
