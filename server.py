@@ -6,7 +6,8 @@ from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user
+
 from weather import get_random_weather
 
 load_dotenv()
@@ -101,26 +102,7 @@ def callback():
     name = userinfo["name"]
     email = userinfo["email"]
 
-    with get_connection() as conn:
-      with conn.cursor() as cur:
-        cur.execute("SELECT user_id, username FROM users WHERE auth0_id = %s;", (sub_id,))
-        user = cur.fetchone()
-
-        if user:
-            user_id = user["user_id"]
-            username = user["username"]
-        else:
-          username = name
-          cur.execute(
-            """
-            INSERT INTO users (auth0_id, username, email)
-            VALUES (%s, %s, %s)
-            RETURNING user_id;
-            """,
-            (sub_id, username, email)
-          )
-          user_id = cur.fetchone()["user_id"]
-          conn.commit()
+    create_user(sub_id, name, email)
 
     session["user"] = {
        "user_id": user_id
