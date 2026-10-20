@@ -4,8 +4,10 @@ import os
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
+from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, create_user
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user
+
 from weather import get_random_weather
 
 load_dotenv()
@@ -17,6 +19,10 @@ class AuthError(Exception):
   def __init__(self, error, status_code):
     self.error = error
     self.status_code = status_code
+
+def get_current_user_id():
+    user = session.get("user")
+    return user.get("user_id") if user else None
 
 def requires_auth(f):
   """
@@ -98,7 +104,9 @@ def callback():
 
     create_user(sub_id, name, email)
 
-    session["user"] = token
+    session["user"] = {
+       "user_id": user_id
+    }
     # The app assumes for a /profile path to be available, change here if it's not
     return redirect("/homepage")
 
@@ -141,42 +149,19 @@ def logout():
 @requires_auth
 def homepage():
     category = request.args.get("category") or "general"
+    if "csrf_token" not in session:
+        session["csrf_token"] = token_urlsafe(32)
 
-    posts = [
-        {
-            "userName": "user1",
-            "title": "title1",
-            "category": "sport",
-            "description": "description1",
-            "video": "http://farm3.staticflickr.com/2875/9069037713_1752f5daeb.jpg",
-        },
-        {
-            "userName": "user2",
-            "title": "test_title",
-            "category": "study",
-            "description": "test",
-            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
-        },
-        {
-            "userName": "user3",
-            "title": "bird!!",
-            "category": "general",
-            "description": "Look at this bird!!!",
-            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
-        },
-        {
-            "userName": "user4",
-            "title": "bird!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-            "category": "general",
-            "description": "Look at this bird!!!",
-            "video": "http://farm3.staticflickr.com/2813/9069585985_80da8db54f.jpg"
-        }
-    ]
+    posts = []
 
-    database_videos = get_videos_by_category(category)
+    database_videos = get_videos_by_category(category, get_current_user_id())
     posts.extend(
         {
-            "userName": video["username"],
+            "video_id": video["video_id"],
+            "liked": video["liked"],
+            "like_count": video["like_count"],
+            "userName": get_users_by_id(video["author_id"])["username"],
+            "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
             "description": video["description"],
@@ -211,15 +196,52 @@ def homepage():
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
 
+@app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
+def video_like(video_id):
+    user_id = get_current_user_id()
+    if user_id is None:
+        return {"error": "Please log in to like videos."}, 401
+
+    csrf_token = session.get("csrf_token")
+    if not csrf_token or not compare_digest(csrf_token.encode(), request.headers.get("X-CSRF-Token", "").encode()):
+        return {"error": "Please refresh the page and try again."}, 403
+
+    with get_connection() as conn:
+        exists = conn.execute(
+            """
+            SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s) AS user_exists,
+                   EXISTS (SELECT 1 FROM videos WHERE video_id = %s) AS video_exists
+            """,
+            (user_id, video_id),
+        ).fetchone()
+
+    if not exists["user_exists"]:
+        return {"error": "Please log in again."}, 401
+    if not exists["video_exists"]:
+        return {"error": "This video is no longer available."}, 404
+
+    if request.method == "POST":
+        like_video(user_id, video_id)
+    else:
+        unlike_video(user_id, video_id)
+
+    return get_video_like_state(user_id, video_id)
+
 @app.route("/profile")
 @requires_auth
 def profile():
-    return render_template("profile_own.html")
+    my_id = get_current_user_id()
+    my_info = get_users_by_id(my_id)
+    posts = get_videos_by_id(my_id)
+    return render_template("profile_own.html", my_info=my_info, posts=posts)
 
-@app.route("/profile_other")
+@app.route("/profile_other", methods=["GET"])
 @requires_auth
 def profile_other():
-    return render_template("profile_other.html")
+    user_id = request.args.get("user_id")
+    user_info = get_users_by_id(user_id)
+    posts = get_videos_by_id(user_id)
+    return render_template("profile_other.html", user_info=user_info, posts=posts)
 
 if __name__ == "__main__":
     app.run(debug=True)

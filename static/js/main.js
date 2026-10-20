@@ -101,6 +101,56 @@ if (window.lucide) {
 
 loadCurrentWeather();
 
+document.querySelectorAll('.like-button').forEach((button) => {
+    button.addEventListener('click', async () => {
+        if (button.disabled) {
+            return;
+        }
+
+        const card = button.closest('.post-item');
+        const errorMessage = card.querySelector('.like-error');
+        const likeCount = card.querySelector('.like-count');
+        const wasLiked = button.getAttribute('aria-pressed') === 'true';
+        const previousCount = Number(likeCount.dataset.count);
+        const renderState = (liked, count) => {
+            button.setAttribute('aria-pressed', String(liked));
+            button.setAttribute('aria-label', liked ? 'Unlike' : 'Like');
+            likeCount.dataset.count = count;
+            likeCount.textContent = count > 999 ? '999+' : count;
+        };
+
+        button.disabled = true;
+        errorMessage.hidden = true;
+        renderState(!wasLiked, previousCount + (wasLiked ? -1 : 1));
+
+        try {
+            const response = await fetch(button.dataset.likeUrl, {
+                method: wasLiked ? 'DELETE' : 'POST',
+                headers: { 'X-CSRF-Token': button.dataset.csrfToken },
+            });
+
+            if (response.status === 401) {
+                renderState(wasLiked, previousCount);
+                window.location.assign('/login');
+                return;
+            }
+
+            const state = await response.json();
+            if (!response.ok) {
+                throw new Error(state.error || 'Unable to update your like. Please try again.');
+            }
+
+            renderState(state.liked, state.like_count);
+        } catch (error) {
+            renderState(wasLiked, previousCount);
+            errorMessage.textContent = error.message;
+            errorMessage.hidden = false;
+        } finally {
+            button.disabled = false;
+        }
+    });
+});
+
 if (menuBtn && sidebar && overlay && closeBtn) {
     let isOpen = false;
 

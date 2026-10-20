@@ -92,17 +92,81 @@ def create_video(username, title, description, video_url, category):
         ).fetchone()
 
 
-def get_videos_by_category(category):
+def get_videos_by_category(category, user_id=None):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*,
+                   (SELECT COUNT(*) FROM video_likes
+                    WHERE video_likes.video_id = videos.video_id) AS like_count,
+                   EXISTS (SELECT 1 FROM video_likes
+                           WHERE video_likes.video_id = videos.video_id
+                             AND video_likes.user_id = %s) AS liked
+            FROM videos
+            WHERE category = %s
+            ORDER BY created_at DESC
+            """,
+            (user_id, category),
+        ).fetchall()
+
+def get_videos_by_id(user_id):
     with get_connection() as conn:
         return conn.execute(
             """
             SELECT *
             FROM videos
-            WHERE category = %s
+            WHERE author_id = %s
             ORDER BY created_at DESC
             """,
-            (category,),
+            (user_id,),
         ).fetchall()
+
+def get_users_by_id(user_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT *
+            FROM users
+            WHERE user_id = %s
+            """,
+            (user_id,),
+        ).fetchone()
+
+
+def like_video(user_id, video_id):
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO video_likes (user_id, video_id)
+            VALUES (%s, %s)
+            ON CONFLICT (user_id, video_id) DO NOTHING
+            """,
+            (user_id, video_id),
+        )
+
+
+def unlike_video(user_id, video_id):
+    with get_connection() as conn:
+        conn.execute(
+            """
+            DELETE FROM video_likes
+            WHERE user_id = %s AND video_id = %s
+            """,
+            (user_id, video_id),
+        )
+
+
+def get_video_like_state(user_id, video_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT COUNT(*) AS like_count,
+                   COALESCE(BOOL_OR(user_id = %s), FALSE) AS liked
+            FROM video_likes
+            WHERE video_id = %s
+            """,
+            (user_id, video_id),
+        ).fetchone()
 
 
 if __name__ == "__main__":
