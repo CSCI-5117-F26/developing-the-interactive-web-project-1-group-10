@@ -102,10 +102,12 @@ def callback():
     name = userinfo["name"]
     email = userinfo["email"]
 
-    create_user(sub_id, name, email)
+    user_id, username = create_user(sub_id, name, email)
+    print(f"User: {user_id}, {username}")
 
     session["user"] = {
-       "user_id": user_id
+       "user_id": user_id,
+       "username": username
     }
     # The app assumes for a /profile path to be available, change here if it's not
     return redirect("/homepage")

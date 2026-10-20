@@ -35,21 +35,28 @@ def get_connection():
 
 def create_user(sub_id, username, email):
   with get_connection() as conn:
-    user = conn.execute("SELECT user_id, username FROM users WHERE auth0_id = %s;", (sub_id,)).fetchone()
+    with conn.cursor() as cur:
+      cur.execute("SELECT user_id, username FROM users WHERE auth0_id = %s;", (sub_id,))
+      user = cur.fetchone()
 
-    if user:
-        user_id = user["user_id"]
-        username = user["username"]
-        return None
-    else:
-      return conn.execute(
-        """
-        INSERT INTO users (auth0_id, username, email)
-        VALUES (%s, %s, %s)
-        RETURNING user_id;
-        """,
-        (sub_id, username, email)
-      ).fetchone()
+      if user:
+          user_id = user["user_id"]
+          username = user["username"]
+          return user_id, username
+      else:
+        cur.execute(
+          """
+          INSERT INTO users (auth0_id, username, email)
+          VALUES (%s, %s, %s)
+          RETURNING user_id;
+          """,
+          (sub_id, username, email)
+        )
+        new_user = cur.fetchone()
+        user_id = new_user["user_id"]
+
+        conn.commit()
+        return user_id, username
 
 def create_videos_table():
     with get_connection() as conn:
