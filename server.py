@@ -39,7 +39,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "profile/<int:id>", "profile_other", "upload"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "profile_other", "upload"}:
         return {}
 
     weather = session.get("weather_override")
