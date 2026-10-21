@@ -151,6 +151,53 @@ document.querySelectorAll('.like-button').forEach((button) => {
     });
 });
 
+document.querySelectorAll('.subscribe-button').forEach((button) => {
+    button.addEventListener('click', async () => {
+        if (button.disabled) {
+            return;
+        }
+
+        const profile = button.closest('.profile');
+        const subscribeCount = profile.querySelector('.subscribe-count');
+        const wasSubscribed = button.getAttribute('aria-pressed') === 'true';
+        const previousCount = Number(subscribeCount.dataset.count);
+        const renderState = (subscribed, count) => {
+            button.setAttribute('aria-pressed', String(subscribed));
+            button.setAttribute('aria-label', subscribed ? 'Unsubscribe' : 'Subscribe');
+            subscribeCount.dataset.count = count;
+            subscribeCount.textContent = count;
+            button.textContent = subscribed ? 'Unsubscribe' : 'Subscribe';
+        };
+
+        button.disabled = true;
+        renderState(!wasSubscribed, previousCount + (wasSubscribed ? -1 : 1));
+
+        try {
+            const response = await fetch(button.dataset.subscribeUrl, {
+                method: wasSubscribed ? 'DELETE' : 'POST',
+                headers: { 'X-CSRF-Token': button.dataset.csrfToken },
+            });
+
+            if (response.status === 401) {
+                renderState(wasSubscribed, previousCount);
+                window.location.assign('/login');
+                return;
+            }
+
+            const state = await response.json();
+            if (!response.ok) {
+                throw new Error(state.error || 'Unable to update your subscription. Please try again.');
+            }
+
+            renderState(state.subscribed, state.subscribed_count);
+        } catch (error) {
+            renderState(wasSubscribed, previousCount);
+        } finally {
+            button.disabled = false;
+        }
+    });
+});
+
 if (menuBtn && sidebar && overlay && closeBtn) {
     let isOpen = false;
 

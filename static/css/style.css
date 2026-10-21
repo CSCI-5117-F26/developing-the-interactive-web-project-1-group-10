@@ -165,7 +165,7 @@ body.menu-open {
 
 .menu-btn:hover,
 .menu-btn:focus {
-    background: #e0e0e0;
+    background: #cad27a;
 }
 
 .top-bar .category-tabs {
@@ -174,7 +174,7 @@ body.menu-open {
     min-width: 0;
     max-width: 900px;
     overflow-x: auto;
-    background: #e0e0e0;
+    background: #ecf396;
     border-radius: 12px;
     scrollbar-width: thin;
 }
@@ -197,7 +197,7 @@ body.menu-open {
 .top-bar .category-tabs .pure-menu-link:hover,
 .top-bar .category-tabs .pure-menu-link:focus,
 .top-bar .category-tabs .pure-menu-link.active {
-    background: #cfcfcf;
+    background: #e0ec52;
     color: #000;
 }
 
@@ -223,7 +223,7 @@ body.menu-open {
 .mission-banner {
     text-align: center;
     padding: 10px 24px;
-    background: #e0e0e0;
+    background: #ecf396;
     border-radius: 12px;
     margin: 10px auto;
     box-sizing: border-box;
@@ -265,7 +265,7 @@ body.menu-open {
     height: 100vh;
     height: 100dvh;
     overflow-y: auto;
-    background: #dedede;
+    background: #f5f7ea;
     box-shadow: 4px 0 14px rgba(0, 0, 0, 0.16);
     transform: translateX(-105%);
     visibility: hidden;
@@ -404,7 +404,7 @@ body.menu-open {
     width: 104px;
     height: 104px;
     border-radius: 50%;
-    background: #dedede;
+    background: #f5f7ea;
     color: #111;
 }
 
@@ -431,7 +431,7 @@ body.menu-open {
     width: 100%;
     padding: 46px 48px 20px;
     border-radius: 16px;
-    background: #dedede;
+    background: #f5f7ea;
 }
 
 .post-card::before {
@@ -441,7 +441,7 @@ body.menu-open {
     width: 0;
     height: 0;
     border-top: 14px solid transparent;
-    border-right: 20px solid #dedede;
+    border-right: 20px solid #f5f7ea;
     border-bottom: 14px solid transparent;
     content: "";
 }
@@ -458,7 +458,7 @@ body.menu-open {
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #c6c6c6;
+    background: #f5f7ea;
     color: #fff;
     cursor: pointer;
 }
@@ -537,7 +537,7 @@ body.menu-open {
 
 .post-actions button:hover,
 .post-actions button:focus {
-    background: #c8c8c8;
+    background: #e0ec52;
 }
 
 .post-actions .lucide {
@@ -648,7 +648,7 @@ body.menu-open {
         top: -16px;
         left: 28px;
         border-right: 14px solid transparent;
-        border-bottom: 18px solid #dedede;
+        border-bottom: 18px solid #f5f7ea;
         border-left: 14px solid transparent;
     }
 

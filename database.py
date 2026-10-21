@@ -128,15 +128,20 @@ def get_videos_by_id(user_id):
             (user_id,),
         ).fetchall()
 
-def get_users_by_id(user_id):
+def get_users_by_id(user_id, my_id=None):
     with get_connection() as conn:
         return conn.execute(
             """
-            SELECT *
+            SELECT users.*,
+            (SELECT COUNT(*) FROM subscription
+                                WHERE subscription.user_id = users.user_id) AS subscribed_count,
+                               EXISTS (SELECT 1 FROM subscription
+                                       WHERE subscription.user_id = users.user_id
+                                         AND subscription.my_id = %s) AS subscribed
             FROM users
             WHERE user_id = %s
             """,
-            (user_id,),
+            (my_id, user_id,),
         ).fetchone()
 
 
@@ -175,6 +180,58 @@ def get_video_like_state(user_id, video_id):
             (user_id, video_id),
         ).fetchone()
 
+def subscribe(my_id, user_id):
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO subscription (my_id, user_id)
+            VALUES (%s, %s)
+            ON CONFLICT (my_id, user_id) DO NOTHING
+            """,
+            (my_id, user_id),
+        )
+
+
+def unsubscribe(my_id, user_id):
+    with get_connection() as conn:
+        conn.execute(
+            """
+            DELETE FROM subscription
+            WHERE my_id = %s AND user_id = %s
+            """,
+            (my_id, user_id),
+        )
+
+
+def get_subscription_state(my_id, user_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT COUNT(*) AS subscribed_count,
+                   COALESCE(BOOL_OR(my_id = %s), FALSE) AS subscribed
+            FROM subscription
+            WHERE user_id = %s
+            """,
+            (my_id, user_id),
+        ).fetchone()
+
+def get_following_videos(my_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*,
+            (SELECT COUNT(*) FROM video_likes
+                WHERE video_likes.video_id = videos.video_id) AS like_count,
+                EXISTS (SELECT 1 FROM video_likes
+                        WHERE video_likes.video_id = videos.video_id
+                            AND video_likes.user_id = %s) AS liked
+            FROM subscription
+            INNER JOIN videos on subscription.user_id = videos.author_id
+            WHERE subscription.my_id = %s
+            ORDER BY created_at DESC
+            """,
+            (my_id, my_id,),
+        ).fetchall()
 
 if __name__ == "__main__":
     create_videos_table()
