@@ -198,7 +198,7 @@ def homepage():
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     return render_template("homepage.html", posts=posts, mission=mission, category=category)
 
-@app.route("/upload")
+@app.route("/upload", methods=["GET", "POST"])
 @requires_auth
 def upload():
   return render_template("upload.html")
