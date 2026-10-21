@@ -12,10 +12,16 @@
 
 {% block content %}
     <section class="post-feed" aria-label="Posts">
-        {% for post in posts %}
-            {% if post.category == category %}
+        {% if category != "following" %}
+            {% for post in posts %}
+                {% if post.category == category %}
+                    {% include "components/_vlog_card.html" %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for post in following_posts %}
                 {% include "components/_vlog_card.html" %}
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
+        {% endif %}
     </section>
 {% endblock %}

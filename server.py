@@ -6,7 +6,7 @@ from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state, get_following_videos
 
 from weather import get_random_weather
 
@@ -172,6 +172,24 @@ def homepage():
         for video in database_videos
     )
 
+    following_videos = get_following_videos(get_current_user_id())
+    following_posts = []
+
+    following_posts.extend(
+        {
+            "video_id": video["video_id"],
+            "liked": video["liked"],
+            "like_count": video["like_count"],
+            "userName": get_users_by_id(video["author_id"])["username"],
+            "author_id": video["author_id"],
+            "title": video["title"],
+            "category": video["category"],
+            "description": video["description"],
+            "video": video["video_url"],
+        }
+        for video in following_videos
+    )
+
     missions = [
         {
             "category": "following",
@@ -196,7 +214,8 @@ def homepage():
     ]
 
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
-    return render_template("homepage.html", posts=posts, mission=mission, category=category)
+    print(following_posts)
+    return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts)
 
 @app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
 def video_like(video_id):

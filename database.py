@@ -182,7 +182,6 @@ def get_video_like_state(user_id, video_id):
 
 def subscribe(my_id, user_id):
     with get_connection() as conn:
-        print('1111')
         conn.execute(
             """
             INSERT INTO subscription (my_id, user_id)
@@ -191,7 +190,6 @@ def subscribe(my_id, user_id):
             """,
             (my_id, user_id),
         )
-        print('2222')
 
 
 def unsubscribe(my_id, user_id):
@@ -216,6 +214,24 @@ def get_subscription_state(my_id, user_id):
             """,
             (my_id, user_id),
         ).fetchone()
+
+def get_following_videos(my_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*,
+            (SELECT COUNT(*) FROM video_likes
+                WHERE video_likes.video_id = videos.video_id) AS like_count,
+                EXISTS (SELECT 1 FROM video_likes
+                        WHERE video_likes.video_id = videos.video_id
+                            AND video_likes.user_id = %s) AS liked
+            FROM subscription
+            INNER JOIN videos on subscription.user_id = videos.author_id
+            WHERE subscription.my_id = %s
+            ORDER BY created_at DESC
+            """,
+            (my_id, my_id,),
+        ).fetchall()
 
 if __name__ == "__main__":
     create_videos_table()
