@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+{% block content %}
+    <main class="profile">
+        <img class="profile-picture" src="{{ url_for('static', filename='images/profile/peter-parker.jpg') }}" alt="Peter Parker">
+        <h1>{{ user_info.username }}</h1>
+        <p>
+            <span class="subscribe-count" aria-live="polite" data-count="{{ user_info.subscribed_count }}">{{ user_info.subscribed_count }}</span>
+            <span>followers | 17 videos</span>
+        </p>
+        {% if my_id != user_info.user_id %}
+            <button
+                class="subscribe-button pure-button"
+                type="button"
+                aria-label="{{ 'Unsubscribe' if user_info.subscribed else 'Subscribe' }}"
+                aria-pressed="{{ 'true' if user_info.subscribed else 'false' }}"
+                data-subscribe-url="{{ url_for('subscribe', user_id=user_info.user_id) }}"
+                data-csrf-token="{{ session.get('csrf_token', '') }}"
+            >
+            {{ 'Unsubscribe' if user_info.subscribed else 'Subscribe' }}
+            </button>
+        {% endif %}
+
+        <div class="videos">
+            {% for post in posts %}
+                <div>
+                    <img src="{{ url_for('static', filename='images/profile/video-1.png') }}"></video>
+                    <p>&#9654; 1 million views</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}

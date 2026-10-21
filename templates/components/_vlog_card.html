@@ -1,5 +1,5 @@
 <article class="post-item" data-video-id="{{ post.video_id }}">
-    <a href="{{ url_for('profile_other', user_id=post.author_id) }}" class="post-user">
+    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user">
         <div class="post-avatar" aria-hidden="true">
             <i data-lucide="user-round"></i>
         </div>

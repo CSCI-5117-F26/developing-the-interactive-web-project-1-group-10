@@ -6,7 +6,7 @@ from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state
 
 from weather import get_random_weather
 
@@ -39,7 +39,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "profile_other"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile"}:
         return {}
 
     weather = session.get("weather_override")
@@ -231,19 +231,36 @@ def video_like(video_id):
 
 @app.route("/profile")
 @requires_auth
-def profile():
-    my_id = get_current_user_id()
-    my_info = get_users_by_id(my_id)
-    posts = get_videos_by_id(my_id)
-    return render_template("profile_own.html", my_info=my_info, posts=posts)
+def my_profile():
+    return profile(get_current_user_id())
 
-@app.route("/profile_other", methods=["GET"])
+@app.route("/profile/<int:id>")
 @requires_auth
-def profile_other():
-    user_id = request.args.get("user_id")
-    user_info = get_users_by_id(user_id)
+def profile(id):
+    user_id = id or get_current_user_id()
+    my_id = get_current_user_id()
+    user_info = get_users_by_id(user_id, my_id=my_id)
     posts = get_videos_by_id(user_id)
-    return render_template("profile_other.html", user_info=user_info, posts=posts)
+    return render_template("profile.html", user_info=user_info, posts=posts, my_id = my_id)
+
+@app.route("/api/subscribe/<int:user_id>", methods=["POST", "DELETE"])
+def subscribe(user_id):
+    my_id = get_current_user_id()
+    if user_id is None:
+        return {"error": "Please log in to subscribe."}, 401
+    if my_id == user_id:
+        return {"error": "Cannot subscribe my account."}, 401
+
+    csrf_token = session.get("csrf_token")
+    if not csrf_token or not compare_digest(csrf_token.encode(), request.headers.get("X-CSRF-Token", "").encode()):
+        return {"error": "Please refresh the page and try again."}, 403
+
+    if request.method == "POST":
+        create_subscription(my_id, user_id)
+    else:
+        unsubscribe(my_id, user_id)
+
+    return get_subscription_state(my_id, user_id)
 
 if __name__ == "__main__":
     app.run(debug=True)
