@@ -6,7 +6,8 @@ from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, get_video_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state, get_following_videos
+from database import subscribe as create_subscription
+import database
 
 from weather import get_random_weather
 
@@ -39,7 +40,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "my_profile", "vlog_detail"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "vlog_detail", "liked_videos"}:
         return {}
 
     weather = session.get("weather_override")
@@ -102,7 +103,7 @@ def callback():
     name = userinfo["name"]
     email = userinfo["email"]
 
-    user_id, username = create_user(sub_id, name, email)
+    user_id, username = database.create_user(sub_id, name, email)
     print(f"User: {user_id}, {username}")
 
     session["user"] = {
@@ -156,13 +157,13 @@ def homepage():
 
     posts = []
 
-    database_videos = get_videos_by_category(category, get_current_user_id())
+    database_videos = database.get_videos_by_category(category, get_current_user_id())
     posts.extend(
         {
             "video_id": video["video_id"],
             "liked": video["liked"],
             "like_count": video["like_count"],
-            "userName": get_users_by_id(video["author_id"])["username"],
+            "userName": database.get_users_by_id(video["author_id"])["username"],
             "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
@@ -172,7 +173,7 @@ def homepage():
         for video in database_videos
     )
 
-    following_videos = get_following_videos(get_current_user_id())
+    following_videos = database.get_following_videos(get_current_user_id())
     following_posts = []
 
     following_posts.extend(
@@ -180,7 +181,7 @@ def homepage():
             "video_id": video["video_id"],
             "liked": video["liked"],
             "like_count": video["like_count"],
-            "userName": get_users_by_id(video["author_id"])["username"],
+            "userName": database.get_users_by_id(video["author_id"])["username"],
             "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
@@ -220,7 +221,7 @@ def homepage():
 @app.route("/videos/<int:video_id>")
 @requires_auth
 def vlog_detail(video_id):
-    post = get_video_by_id(video_id, get_current_user_id())
+    post = database.get_video_by_id(video_id, get_current_user_id())
     if post is None:
         abort(404)
 
@@ -229,6 +230,35 @@ def vlog_detail(video_id):
 
     return render_template(
         "vlog_detail.html", post=post, category=post["category"], is_detail=True
+    )
+
+@app.route("/liked_videos")
+@requires_auth
+def liked_videos():
+    liked_videos = database.get_liked_videos(get_current_user_id())
+    
+    posts = []
+
+    posts.extend(
+        {
+            "video_id": video["video_id"],
+            "liked": video["liked"],
+            "like_count": video["like_count"],
+            "userName": database.get_users_by_id(video["author_id"])["username"],
+            "author_id": video["author_id"],
+            "title": video["title"],
+            "category": video["category"],
+            "description": video["description"],
+            "video": video["video_url"],
+        }
+        for video in liked_videos
+    )
+
+    if "csrf_token" not in session:
+        session["csrf_token"] = token_urlsafe(32)
+
+    return render_template(
+        "liked_videos.html", posts=posts, is_detail=False
     )
 
 
@@ -242,7 +272,7 @@ def video_like(video_id):
     if not csrf_token or not compare_digest(csrf_token.encode(), request.headers.get("X-CSRF-Token", "").encode()):
         return {"error": "Please refresh the page and try again."}, 403
 
-    with get_connection() as conn:
+    with database.get_connection() as conn:
         exists = conn.execute(
             """
             SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s) AS user_exists,
@@ -257,11 +287,11 @@ def video_like(video_id):
         return {"error": "This video is no longer available."}, 404
 
     if request.method == "POST":
-        like_video(user_id, video_id)
+        database.like_video(user_id, video_id)
     else:
-        unlike_video(user_id, video_id)
+        database.unlike_video(user_id, video_id)
 
-    return get_video_like_state(user_id, video_id)
+    return database.get_video_like_state(user_id, video_id)
 
 @app.route("/profile")
 @requires_auth
@@ -273,8 +303,8 @@ def my_profile():
 def profile(id):
     user_id = id or get_current_user_id()
     my_id = get_current_user_id()
-    user_info = get_users_by_id(user_id, my_id=my_id)
-    posts = get_videos_by_id(user_id)
+    user_info = database.get_users_by_id(user_id, my_id=my_id)
+    posts = database.get_videos_by_id(user_id)
     return render_template("profile.html", user_info=user_info, posts=posts, my_id = my_id)
 
 @app.route("/api/subscribe/<int:user_id>", methods=["POST", "DELETE"])
@@ -292,9 +322,9 @@ def subscribe(user_id):
     if request.method == "POST":
         create_subscription(my_id, user_id)
     else:
-        unsubscribe(my_id, user_id)
+        database.unsubscribe(my_id, user_id)
 
-    return get_subscription_state(my_id, user_id)
+    return database.get_subscription_state(my_id, user_id)
 
 if __name__ == "__main__":
     app.run(debug=True)
