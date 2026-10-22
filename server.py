@@ -13,7 +13,7 @@ from weather import get_random_weather
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY") or os.urandom(24)
+app.secret_key = os.environ["FLASK_SECRET"]
 
 class AuthError(Exception):
   def __init__(self, error, status_code):
@@ -21,16 +21,18 @@ class AuthError(Exception):
     self.status_code = status_code
 
 def get_current_user_id():
+    """Return the database ID for the logged-in user, or None for a guest."""
     user = session.get("user")
-    return user.get("user_id") if user else None
+    if user is None:
+        return None
+
+    return user.get("user_id")
 
 def requires_auth(f):
-  """
-  Use on routes that require a valid session, otherwise it aborts with a 403
-  """
+  """Redirect guests to login when a page requires an account."""
   @wraps(f)
   def decorated(*args, **kwargs):
-    if session.get("user") is None:
+    if get_current_user_id() is None:
       return redirect(url_for("login"))
 
     return f(*args, **kwargs)
@@ -65,8 +67,6 @@ def change_weather_auto():
     return redirect(url_for("homepage"))
 
 
-app.secret_key = os.environ["FLASK_SECRET"]
-
 oauth = OAuth(app)
 
 domain = os.environ["AUTH0_DOMAIN"]
@@ -85,7 +85,7 @@ oauth.register(
 
 @app.route("/")
 def index():
-    if "user" in session:
+    if get_current_user_id() is not None:
         return redirect(url_for("homepage"))
 
     return render_template("login.html")
@@ -103,14 +103,11 @@ def callback():
     email = userinfo["email"]
 
     user_id, username = create_user(sub_id, name, email)
-    print(f"User: {user_id}, {username}")
-
     session["user"] = {
        "user_id": user_id,
        "username": username
     }
-    # The app assumes for a /profile path to be available, change here if it's not
-    return redirect("/homepage")
+    return redirect(url_for("homepage"))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -265,7 +262,7 @@ def profile(id):
 @app.route("/api/subscribe/<int:user_id>", methods=["POST", "DELETE"])
 def subscribe(user_id):
     my_id = get_current_user_id()
-    if user_id is None:
+    if my_id is None:
         return {"error": "Please log in to subscribe."}, 401
     if my_id == user_id:
         return {"error": "Cannot subscribe my account."}, 401
