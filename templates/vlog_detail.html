@@ -3,8 +3,65 @@
 {% block title %}{{ post.title }} | Missions{% endblock %}
 
 {% block content %}
-    <section class="post-feed vlog-detail" aria-labelledby="vlog-title">
+    <section class="vlog-detail" aria-labelledby="vlog-title">
         <a class="back-to-feed" href="{{ url_for('homepage', category=post.category) }}">&larr; Back to {{ post.category | capitalize }}</a>
-        {% include "components/_vlog_card.html" %}
+        <article class="post-item vlog-watch" data-video-id="{{ post.video_id }}">
+            <div class="vlog-main">
+                <video class="vlog-video" src="{{ post.video }}" aria-label="{{ post.title }}" controls playsinline preload="metadata"></video>
+
+                <div class="vlog-intro">
+                    <h1 class="post-title" id="vlog-title">{{ post.title }}</h1>
+                    <p class="post-meta">
+                        <a href="{{ url_for('homepage', category=post.category) }}">{{ post.category | capitalize }}</a>
+                        <span>Published <time datetime="{{ post.created_at.isoformat() }}">{{ post.created_at.strftime('%b %d, %Y at %H:%M %Z') }}</time></span>
+                    </p>
+                    <p class="post-description">{{ post.description }}</p>
+                </div>
+            </div>
+
+            <aside class="vlog-discussion" aria-labelledby="comments-title">
+                <div class="vlog-side-header">
+                    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user vlog-author">
+                        <div class="post-avatar" aria-hidden="true">
+                            <i data-lucide="user-round"></i>
+                        </div>
+                        <span class="vlog-author-copy">
+                            <span class="post-username">{{ post.userName }}</span>
+                            <span class="vlog-author-label">Creator</span>
+                        </span>
+                    </a>
+
+                    <div class="post-actions" aria-label="Post actions">
+                        <button
+                            class="like-button"
+                            type="button"
+                            aria-label="{{ 'Unlike' if post.liked else 'Like' }}"
+                            aria-pressed="{{ 'true' if post.liked else 'false' }}"
+                            data-like-url="{{ url_for('video_like', video_id=post.video_id) }}"
+                            data-csrf-token="{{ session.get('csrf_token', '') }}"
+                        >
+                            <i data-lucide="heart" aria-hidden="true"></i>
+                        </button>
+                        <span class="like-count" aria-live="polite" data-count="{{ post.like_count }}">{{ '999+' if post.like_count > 999 else post.like_count }}</span>
+                        <span class="vlog-like-label">Likes</span>
+                    </div>
+                    <p class="like-error" role="status" hidden></p>
+                </div>
+
+                <section class="vlog-comments" aria-labelledby="comments-title">
+                    <h2 id="comments-title">Comments</h2>
+                    <div class="vlog-comment-list" role="region" aria-labelledby="comments-title" tabindex="0">
+                        <div class="vlog-comments-empty">
+                            <i data-lucide="messages-square" aria-hidden="true"></i>
+                            <p>Comments are coming soon.</p>
+                            <p>This area will show the conversation for this Vlog.</p>
+                        </div>
+                    </div>
+                    <div class="vlog-comments-footer">
+                        <p>Comment posting is not available yet.</p>
+                    </div>
+                </section>
+            </aside>
+        </article>
     </section>
 {% endblock %}
