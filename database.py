@@ -250,6 +250,26 @@ def get_subscription_state(my_id, user_id):
             (my_id, user_id),
         ).fetchone()
 
+def get_following_lists(my_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT users.*,
+            (SELECT COUNT(*) AS subscribed_count
+            FROM subscription
+            WHERE subscription.user_id = users.user_id
+            ),
+            EXISTS (
+            SELECT 1 FROM subscription
+            WHERE subscription.user_id = users.user_id AND subscription.my_id = %s
+            ) AS subscribed
+            FROM subscription
+            INNER JOIN users on subscription.user_id = users.user_id
+            WHERE subscription.my_id = %s
+            """,
+            (my_id, my_id,),
+        ).fetchall()
+
 def get_following_videos(my_id):
     with get_connection() as conn:
         return conn.execute(

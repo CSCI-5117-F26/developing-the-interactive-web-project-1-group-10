@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Liked Videos{% endblock %}
+
+{% block content %}
+    <section>
+        {% for user in user_lists %}
+            {% include "components/user_info.html" %}
+        {% endfor %}
+    </section>
+{% endblock %}

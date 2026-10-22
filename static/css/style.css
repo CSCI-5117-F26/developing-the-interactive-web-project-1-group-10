@@ -792,6 +792,12 @@ body.menu-open {
     fill: currentColor;
 }
 
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 @media (max-width: 900px) {
     .vlog-detail .vlog-watch {
         grid-template-columns: minmax(0, 1fr);

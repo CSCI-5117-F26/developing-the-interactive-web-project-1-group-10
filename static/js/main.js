@@ -169,7 +169,7 @@ document.querySelectorAll('.subscribe-button').forEach((button) => {
             return;
         }
 
-        const profile = button.closest('.profile');
+        const profile = button.closest('.profile, .user-item');
         const subscribeCount = profile.querySelector('.subscribe-count');
         const wasSubscribed = button.getAttribute('aria-pressed') === 'true';
         const previousCount = Number(subscribeCount.dataset.count);

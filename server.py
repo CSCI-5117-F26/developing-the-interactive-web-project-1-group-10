@@ -40,7 +40,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "my_profile", "vlog_detail", "liked_videos"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "vlog_detail", "liked_videos", "subscription_list"}:
         return {}
 
     weather = session.get("weather_override")
@@ -261,6 +261,17 @@ def liked_videos():
         "liked_videos.html", posts=posts, is_detail=False
     )
 
+@app.route("/subscription_list")
+@requires_auth
+def subscription_list():
+    list = database.get_following_lists(get_current_user_id())
+
+    if "csrf_token" not in session:
+        session["csrf_token"] = token_urlsafe(32)
+
+    return render_template(
+        "subscription_list.html", user_lists=list
+    )
 
 @app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
 def video_like(video_id):
