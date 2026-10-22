@@ -101,6 +101,18 @@ if (window.lucide) {
 
 loadCurrentWeather();
 
+document.querySelectorAll('.post-item[data-detail-url]').forEach((card) => {
+    card.addEventListener('click', (event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        if (event.target.closest('a, button, video, input, textarea, select, [contenteditable="true"]') || window.getSelection()?.toString()) {
+            return;
+        }
+        window.location.assign(card.dataset.detailUrl);
+    });
+});
+
 document.querySelectorAll('.like-button').forEach((button) => {
     button.addEventListener('click', async () => {
         if (button.disabled) {

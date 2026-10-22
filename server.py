@@ -1,12 +1,12 @@
 from functools import wraps
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, abort, redirect, render_template, request, url_for, session
 import os
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from secrets import compare_digest, token_urlsafe
 
-from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state, get_following_videos
+from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, get_video_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state, get_following_videos
 
 from weather import get_random_weather
 
@@ -39,7 +39,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "my_profile"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "vlog_detail"}:
         return {}
 
     weather = session.get("weather_override")
@@ -216,6 +216,21 @@ def homepage():
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     print(following_posts)
     return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts)
+
+@app.route("/videos/<int:video_id>")
+@requires_auth
+def vlog_detail(video_id):
+    post = get_video_by_id(video_id, get_current_user_id())
+    if post is None:
+        abort(404)
+
+    if "csrf_token" not in session:
+        session["csrf_token"] = token_urlsafe(32)
+
+    return render_template(
+        "vlog_detail.html", post=post, category=post["category"], is_detail=True
+    )
+
 
 @app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
 def video_like(video_id):

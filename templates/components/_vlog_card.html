@@ -1,4 +1,4 @@
-<article class="post-item" data-video-id="{{ post.video_id }}">
+<article class="post-item" data-video-id="{{ post.video_id }}"{% if not is_detail %} data-detail-url="{{ url_for('vlog_detail', video_id=post.video_id) }}"{% endif %}>
     <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user">
         <div class="post-avatar" aria-hidden="true">
             <i data-lucide="user-round"></i>
@@ -16,7 +16,15 @@
         </div>
 
         <div class="post-copy">
-            <h2 class="post-title">{{ post.title }}</h2>
+            {% if is_detail %}
+                <h1 class="post-title" id="vlog-title">{{ post.title }}</h1>
+                <p class="post-meta">
+                    <a href="{{ url_for('homepage', category=post.category) }}">{{ post.category | capitalize }}</a>
+                    <span>Published <time datetime="{{ post.created_at.isoformat() }}">{{ post.created_at.strftime('%b %d, %Y at %H:%M %Z') }}</time></span>
+                </p>
+            {% else %}
+                <h2 class="post-title"><a class="post-detail-link" href="{{ url_for('vlog_detail', video_id=post.video_id) }}">{{ post.title }}</a></h2>
+            {% endif %}
             <p class="post-description">{{ post.description }}</p>
         </div>
 

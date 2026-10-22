@@ -376,6 +376,52 @@ body.menu-open {
     width: 100%;
 }
 
+.post-item[data-detail-url] .post-card {
+    cursor: pointer;
+}
+
+.post-detail-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.post-detail-link:hover,
+.post-detail-link:focus-visible {
+    text-decoration: underline;
+}
+
+.vlog-detail {
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.back-to-feed {
+    align-self: flex-start;
+    color: #222;
+}
+
+.post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 0 0 12px;
+    color: #5f6368;
+    font-size: 14px;
+}
+
+.post-meta a {
+    color: inherit;
+}
+
+.vlog-detail .post-title,
+.vlog-detail .post-description {
+    overflow-wrap: anywhere;
+}
+
+.vlog-detail .post-description {
+    white-space: pre-wrap;
+}
+
 .post-user {
     display: flex;
     flex-direction: column;

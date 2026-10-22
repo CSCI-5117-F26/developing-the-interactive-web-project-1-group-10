@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} | Missions{% endblock %}
+
+{% block content %}
+    <section class="post-feed vlog-detail" aria-labelledby="vlog-title">
+        <a class="back-to-feed" href="{{ url_for('homepage', category=post.category) }}">&larr; Back to {{ post.category | capitalize }}</a>
+        {% include "components/_vlog_card.html" %}
+    </section>
+{% endblock %}

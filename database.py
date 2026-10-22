@@ -116,6 +116,25 @@ def get_videos_by_category(category, user_id=None):
             (user_id, category),
         ).fetchall()
 
+def get_video_by_id(video_id, user_id=None):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*, users.username AS "userName",
+                   videos.video_url AS video,
+                   (SELECT COUNT(*) FROM video_likes
+                    WHERE video_likes.video_id = videos.video_id) AS like_count,
+                   EXISTS (SELECT 1 FROM video_likes
+                           WHERE video_likes.video_id = videos.video_id
+                             AND video_likes.user_id = %s) AS liked
+            FROM videos
+            JOIN users ON users.user_id = videos.author_id
+            WHERE videos.video_id = %s
+            """,
+            (user_id, video_id),
+        ).fetchone()
+
+
 def get_videos_by_id(user_id):
     with get_connection() as conn:
         return conn.execute(
