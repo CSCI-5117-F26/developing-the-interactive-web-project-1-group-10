@@ -42,11 +42,50 @@
 }
 
 body {
+    --theme-surface: #f4f5f7;
+    --theme-accent: #e2e6eb;
+    --theme-active: #cbd3dd;
     isolation: isolate;
     min-height: 100vh;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #f5f5f5;
+}
+
+body:has(#weatherBackground[data-weather-effect="sun"]) {
+    --theme-surface: #f5f7ea;
+    --theme-accent: #ecf396;
+    --theme-active: #e0ec52;
+}
+
+body:has(#weatherBackground[data-weather-effect="cloudy"]) {
+    --theme-surface: #eef2f6;
+    --theme-accent: #dce5ee;
+    --theme-active: #c4d2e0;
+}
+
+body:has(#weatherBackground[data-weather-effect="rain"]) {
+    --theme-surface: #eef4fa;
+    --theme-accent: #d7e7f5;
+    --theme-active: #b8d2eb;
+}
+
+body:has(#weatherBackground[data-weather-effect="snow"]) {
+    --theme-surface: #f4f9fc;
+    --theme-accent: #e2f2fb;
+    --theme-active: #c6e5f5;
+}
+
+body:has(#weatherBackground[data-weather-effect="fog"]) {
+    --theme-surface: #f1f2f3;
+    --theme-accent: #e0e3e5;
+    --theme-active: #c9ced2;
+}
+
+body:has(#weatherBackground[data-weather-effect="thunderstorm"]) {
+    --theme-surface: #f1eff7;
+    --theme-accent: #ded8ee;
+    --theme-active: #c3b6de;
 }
 
 .weather-background[data-weather-effect="none"] {
@@ -165,7 +204,7 @@ body.menu-open {
 
 .menu-btn:hover,
 .menu-btn:focus {
-    background: #cad27a;
+    background: var(--theme-active);
 }
 
 .top-bar .category-tabs {
@@ -174,7 +213,7 @@ body.menu-open {
     min-width: 0;
     max-width: 900px;
     overflow-x: auto;
-    background: #ecf396;
+    background: var(--theme-accent);
     border-radius: 12px;
     scrollbar-width: thin;
 }
@@ -197,7 +236,7 @@ body.menu-open {
 .top-bar .category-tabs .pure-menu-link:hover,
 .top-bar .category-tabs .pure-menu-link:focus,
 .top-bar .category-tabs .pure-menu-link.active {
-    background: #e0ec52;
+    background: var(--theme-active);
     color: #000;
 }
 
@@ -223,7 +262,7 @@ body.menu-open {
 .mission-banner {
     text-align: center;
     padding: 10px 24px;
-    background: #ecf396;
+    background: var(--theme-accent);
     border-radius: 12px;
     margin: 10px auto;
     box-sizing: border-box;
@@ -265,7 +304,7 @@ body.menu-open {
     height: 100vh;
     height: 100dvh;
     overflow-y: auto;
-    background: #f5f7ea;
+    background: var(--theme-surface);
     box-shadow: 4px 0 14px rgba(0, 0, 0, 0.16);
     transform: translateX(-105%);
     visibility: hidden;
@@ -305,7 +344,7 @@ body.menu-open {
 
 .sidebar .pure-menu-link:hover,
 .sidebar .pure-menu-link:focus {
-    background: #cacaca;
+    background: var(--theme-active);
 }
 
 .sidebar-icon {
@@ -434,7 +473,7 @@ body.menu-open {
 
 .post-user:hover .post-avatar,
 .post-user:focus .post-avatar {
-    background: #c8c8c8;
+    background: var(--theme-active);
 }
 
 .post-user:focus-visible {
@@ -450,7 +489,7 @@ body.menu-open {
     width: 104px;
     height: 104px;
     border-radius: 50%;
-    background: #f5f7ea;
+    background: var(--theme-surface);
     color: #111;
 }
 
@@ -477,7 +516,7 @@ body.menu-open {
     width: 100%;
     padding: 46px 48px 20px;
     border-radius: 16px;
-    background: #f5f7ea;
+    background: var(--theme-surface);
 }
 
 .post-card::before {
@@ -487,7 +526,7 @@ body.menu-open {
     width: 0;
     height: 0;
     border-top: 14px solid transparent;
-    border-right: 20px solid #f5f7ea;
+    border-right: 20px solid var(--theme-surface);
     border-bottom: 14px solid transparent;
     content: "";
 }
@@ -504,14 +543,14 @@ body.menu-open {
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #f5f7ea;
+    background: var(--theme-surface);
     color: #fff;
     cursor: pointer;
 }
 
 .post-menu:hover,
 .post-menu:focus {
-    background: #aaa;
+    background: var(--theme-active);
 }
 
 .post-menu .lucide {
@@ -583,7 +622,7 @@ body.menu-open {
 
 .post-actions button:hover,
 .post-actions button:focus {
-    background: #e0ec52;
+    background: var(--theme-active);
 }
 
 .post-actions .lucide {
@@ -694,7 +733,7 @@ body.menu-open {
         top: -16px;
         left: 28px;
         border-right: 14px solid transparent;
-        border-bottom: 18px solid #f5f7ea;
+        border-bottom: 18px solid var(--theme-surface);
         border-left: 14px solid transparent;
     }
 
