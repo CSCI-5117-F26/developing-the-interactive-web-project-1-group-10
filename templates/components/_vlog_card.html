@@ -44,10 +44,16 @@
                 <i data-lucide="message-circle" aria-hidden="true"></i>
             </a>
             <span class="comment-count" aria-live="polite" data-count="{{ post.comment_count }}">{{ '999+' if post.comment_count > 999 else post.comment_count }}</span>
-            <button type="button" aria-label="Share">
+            <button class="share-button" type="button" aria-label="Share" title="Copy link" data-share-url="{{ url_for('vlog_detail', video_id=post.video_id) }}">
                 <i data-lucide="arrow-up-right" aria-hidden="true"></i>
             </button>
         </div>
         <p class="like-error" role="status" hidden></p>
+        <div class="share-feedback">
+            <p class="share-status" role="status" hidden></p>
+            <label class="share-fallback" hidden>Copy this link:
+                <input type="url" readonly aria-label="Vlog share link">
+            </label>
+        </div>
     </div>
 </article>

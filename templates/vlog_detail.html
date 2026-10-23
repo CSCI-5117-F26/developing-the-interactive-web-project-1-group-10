@@ -44,8 +44,17 @@
                         </button>
                         <span class="like-count" aria-live="polite" data-count="{{ post.like_count }}">{{ '999+' if post.like_count > 999 else post.like_count }}</span>
                         <span class="vlog-like-label">Likes</span>
+                        <button class="share-button" type="button" aria-label="Share" title="Copy link" data-share-url="{{ url_for('vlog_detail', video_id=post.video_id) }}">
+                            <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+                        </button>
                     </div>
                     <p class="like-error" role="status" hidden></p>
+                    <div class="share-feedback">
+                        <p class="share-status" role="status" hidden></p>
+                        <label class="share-fallback" hidden>Copy this link:
+                            <input type="url" readonly aria-label="Vlog share link">
+                        </label>
+                    </div>
                 </div>
 
                 <section class="vlog-comments" aria-labelledby="comments-title" data-comments-url="{{ url_for('video_comments', video_id=post.video_id) }}">

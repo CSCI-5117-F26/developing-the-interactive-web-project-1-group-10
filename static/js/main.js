@@ -106,10 +106,41 @@ document.querySelectorAll('.post-item[data-detail-url]').forEach((card) => {
         if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
             return;
         }
-        if (event.target.closest('a, button, video, input, textarea, select, [contenteditable="true"]') || window.getSelection()?.toString()) {
+        if (event.target.closest('a, button, video, input, textarea, select, [contenteditable="true"], .share-feedback') || window.getSelection()?.toString()) {
             return;
         }
         window.location.assign(card.dataset.detailUrl);
+    });
+});
+
+document.querySelectorAll('.share-button').forEach((button) => {
+    const card = button.closest('.post-item');
+    const status = card.querySelector('.share-status');
+    const fallback = card.querySelector('.share-fallback');
+    const input = fallback.querySelector('input');
+
+    button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        const shareUrl = new URL(button.dataset.shareUrl, window.location.origin).href;
+        button.disabled = true;
+        status.hidden = true;
+        fallback.hidden = true;
+        try {
+            if (!navigator.clipboard?.writeText) {
+                throw new Error('Clipboard access is unavailable.');
+            }
+            await navigator.clipboard.writeText(shareUrl);
+            status.textContent = 'Link copied!';
+        } catch {
+            status.textContent = 'Automatic copying is unavailable. Copy the link below.';
+            input.value = shareUrl;
+            fallback.hidden = false;
+            input.focus({ preventScroll: true });
+            input.select();
+        } finally {
+            status.hidden = false;
+            button.disabled = false;
+        }
     });
 });
 

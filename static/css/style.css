@@ -898,6 +898,37 @@ body.menu-open {
     stroke-width: 2;
 }
 
+.share-status {
+    margin: 12px 0 0;
+    color: #5f6368;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.share-fallback {
+    display: block;
+    margin-top: 8px;
+    color: #222;
+    font-size: 14px;
+}
+
+.share-fallback[hidden] {
+    display: none;
+}
+
+.share-fallback input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    font: inherit;
+}
+
 .post-actions .like-button[aria-pressed="true"] {
     color: #b42318;
 }
