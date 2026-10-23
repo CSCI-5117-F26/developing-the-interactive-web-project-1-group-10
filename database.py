@@ -106,6 +106,8 @@ def get_videos_by_category(category, user_id=None):
             SELECT videos.*,
                    (SELECT COUNT(*) FROM video_likes
                     WHERE video_likes.video_id = videos.video_id) AS like_count,
+                   (SELECT COUNT(*) FROM comments
+                    WHERE comments.video_id = videos.video_id) AS comment_count,
                    EXISTS (SELECT 1 FROM video_likes
                            WHERE video_likes.video_id = videos.video_id
                              AND video_likes.user_id = %s) AS liked
@@ -259,6 +261,8 @@ def get_liked_videos(user_id):
             SELECT videos.*,
             (SELECT COUNT(*) FROM video_likes
                 WHERE video_likes.video_id = videos.video_id) AS like_count,
+            (SELECT COUNT(*) FROM comments
+                WHERE comments.video_id = videos.video_id) AS comment_count,
                 EXISTS (SELECT 1 FROM video_likes
                         WHERE video_likes.video_id = videos.video_id
                             AND video_likes.user_id = %s) AS liked
@@ -330,6 +334,8 @@ def get_following_videos(my_id):
             SELECT videos.*,
             (SELECT COUNT(*) FROM video_likes
                 WHERE video_likes.video_id = videos.video_id) AS like_count,
+            (SELECT COUNT(*) FROM comments
+                WHERE comments.video_id = videos.video_id) AS comment_count,
                 EXISTS (SELECT 1 FROM video_likes
                         WHERE video_likes.video_id = videos.video_id
                             AND video_likes.user_id = %s) AS liked

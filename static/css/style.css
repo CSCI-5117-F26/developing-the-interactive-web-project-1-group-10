@@ -862,13 +862,15 @@ body.menu-open {
     gap: 8px;
 }
 
-.post-actions .like-count {
+.post-actions .like-count,
+.post-actions .comment-count {
     flex: 0 0 4ch;
     min-width: 0;
     font-variant-numeric: tabular-nums;
 }
 
-.post-actions button {
+.post-actions button,
+.post-actions .comment-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -879,11 +881,14 @@ body.menu-open {
     border-radius: 50%;
     background: #fff;
     color: #222;
+    text-decoration: none;
     cursor: pointer;
 }
 
 .post-actions button:hover,
-.post-actions button:focus {
+.post-actions button:focus,
+.post-actions .comment-link:hover,
+.post-actions .comment-link:focus {
     background: var(--theme-active);
 }
 
