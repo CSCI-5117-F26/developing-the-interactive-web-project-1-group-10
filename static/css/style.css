@@ -489,6 +489,7 @@ body.menu-open {
 }
 
 .vlog-side-header {
+    flex-shrink: 0;
     padding: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -543,6 +544,7 @@ body.menu-open {
 }
 
 .vlog-comments h2 {
+    flex-shrink: 0;
     margin: 0;
     padding: 20px 20px 0;
     font-size: 20px;
@@ -572,6 +574,64 @@ body.menu-open {
     margin-bottom: 12px;
 }
 
+.vlog-comments-empty[hidden] {
+    display: none;
+}
+
+.vlog-comment {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.vlog-comment:first-of-type {
+    padding-top: 0;
+}
+
+.vlog-comment:last-child {
+    border-bottom: 0;
+}
+
+.vlog-comment-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 12px;
+}
+
+.vlog-comment-author {
+    color: #222;
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.vlog-comment-author:hover,
+.vlog-comment-author:focus-visible {
+    text-decoration: underline;
+}
+
+.vlog-comment-heading time {
+    color: #5f6368;
+    font-size: 12px;
+}
+
+.vlog-comment-content {
+    margin: 8px 0;
+    color: #222;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.comment-delete {
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: #b42318;
+    font-size: 13px;
+    cursor: pointer;
+}
+
 .vlog-comments-empty p {
     margin: 0 0 8px;
 }
@@ -582,6 +642,7 @@ body.menu-open {
 }
 
 .vlog-comments-footer {
+    flex-shrink: 0;
     padding: 16px 20px;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     color: #5f6368;
@@ -590,6 +651,54 @@ body.menu-open {
 
 .vlog-comments-footer p {
     margin: 0;
+}
+
+.vlog-comment-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #222;
+    font-weight: 600;
+}
+
+.comment-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 72px;
+    max-height: 160px;
+    padding: 10px 12px;
+    resize: vertical;
+    border: 1px solid #999;
+    border-radius: 10px;
+    background: #fff;
+    color: #222;
+    font: inherit;
+    line-height: 1.5;
+}
+
+.vlog-comment-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.comment-submit {
+    border-radius: 8px;
+    background: var(--theme-active);
+    color: #111;
+}
+
+.comment-submit:disabled,
+.comment-delete:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.vlog-comments-footer .vlog-comment-error {
+    margin-top: 10px;
+    color: #b42318;
+    overflow-wrap: anywhere;
 }
 
 .post-meta {

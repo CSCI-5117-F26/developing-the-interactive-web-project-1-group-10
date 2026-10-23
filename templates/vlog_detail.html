@@ -48,17 +48,37 @@
                     <p class="like-error" role="status" hidden></p>
                 </div>
 
-                <section class="vlog-comments" aria-labelledby="comments-title">
-                    <h2 id="comments-title">Comments</h2>
+                <section class="vlog-comments" aria-labelledby="comments-title" data-comments-url="{{ url_for('video_comments', video_id=post.video_id) }}">
+                    <h2 id="comments-title">Comments <span class="comment-count" aria-live="polite">{{ comments | length }}</span></h2>
                     <div class="vlog-comment-list" role="region" aria-labelledby="comments-title" tabindex="0">
-                        <div class="vlog-comments-empty">
+                        <div class="vlog-comments-empty"{% if comments %} hidden{% endif %}>
                             <i data-lucide="messages-square" aria-hidden="true"></i>
-                            <p>Comments are coming soon.</p>
-                            <p>This area will show the conversation for this Vlog.</p>
+                            <p>No comments yet.</p>
+                            <p>Be the first to join the conversation.</p>
                         </div>
+                        {% for comment in comments %}
+                            <article class="vlog-comment" data-comment-id="{{ comment.comment_id }}">
+                                <div class="vlog-comment-heading">
+                                    <a class="vlog-comment-author" href="{{ url_for('profile', id=comment.author_id) }}">{{ comment.username }}</a>
+                                    <time datetime="{{ comment.created_at.isoformat() }}">{{ comment.created_at.strftime('%Y-%m-%d %H:%M %Z') }}</time>
+                                </div>
+                                <p class="vlog-comment-content">{{ comment.content }}</p>
+                                {% if comment.author_id == current_user_id %}
+                                    <button class="comment-delete" type="button" data-delete-url="{{ url_for('comment_delete', comment_id=comment.comment_id) }}">Delete</button>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
                     </div>
                     <div class="vlog-comments-footer">
-                        <p>Comment posting is not available yet.</p>
+                        <form class="comment-form" action="{{ url_for('video_comments', video_id=post.video_id) }}" method="post" data-csrf-token="{{ session.get('csrf_token', '') }}">
+                            <label class="vlog-comment-label" for="comment-content">Add a comment</label>
+                            <textarea id="comment-content" name="content" rows="3" maxlength="1000" required aria-describedby="comment-help" placeholder="Share your thoughts..."></textarea>
+                            <div class="vlog-comment-form-actions">
+                                <span id="comment-help">1–1000 characters</span>
+                                <button class="pure-button comment-submit" type="submit">Post</button>
+                            </div>
+                        </form>
+                        <p class="vlog-comment-error" role="alert" hidden></p>
                     </div>
                 </section>
             </aside>

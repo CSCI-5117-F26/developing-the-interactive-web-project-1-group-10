@@ -135,6 +135,59 @@ def get_video_by_id(video_id, user_id=None):
         ).fetchone()
 
 
+def get_comments(video_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT comments.*, users.username
+            FROM comments
+            JOIN users ON users.user_id = comments.author_id
+            WHERE comments.video_id = %s
+            ORDER BY comments.created_at DESC, comments.comment_id DESC
+            """,
+            (video_id,),
+        ).fetchall()
+
+
+def create_comment(video_id, author_id, content):
+    with get_connection() as conn:
+        comment = conn.execute(
+            """
+            WITH inserted AS (
+                INSERT INTO comments (video_id, author_id, content)
+                VALUES (%s, %s, %s)
+                RETURNING *
+            )
+            SELECT inserted.*, users.username
+            FROM inserted JOIN users ON users.user_id = inserted.author_id
+            """,
+            (video_id, author_id, content),
+        ).fetchone()
+        comment["comment_count"] = conn.execute(
+            "SELECT COUNT(*) AS total FROM comments WHERE video_id = %s",
+            (video_id,),
+        ).fetchone()["total"]
+        return comment
+
+
+def delete_comment(comment_id, author_id):
+    with get_connection() as conn:
+        deleted = conn.execute(
+            """
+            DELETE FROM comments
+            WHERE comment_id = %s AND author_id = %s
+            RETURNING comment_id, video_id
+            """,
+            (comment_id, author_id),
+        ).fetchone()
+        if deleted is not None:
+            deleted["comment_count"] = conn.execute(
+                "SELECT COUNT(*) AS total FROM comments WHERE video_id = %s",
+                (deleted["video_id"],),
+            ).fetchone()["total"]
+        return deleted
+
+
 def get_videos_by_id(user_id):
     with get_connection() as conn:
         return conn.execute(

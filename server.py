@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
 from secrets import compare_digest, token_urlsafe
+from psycopg.errors import ForeignKeyViolation
 
 from database import subscribe as create_subscription
 import database
@@ -229,8 +230,99 @@ def vlog_detail(video_id):
         session["csrf_token"] = token_urlsafe(32)
 
     return render_template(
-        "vlog_detail.html", post=post, category=post["category"], is_detail=True
+        "vlog_detail.html", post=post, category=post["category"], is_detail=True,
+        comments=database.get_comments(video_id), current_user_id=get_current_user_id(),
     )
+
+
+def comment_data(comment, user_id):
+    return {
+        "comment_id": comment["comment_id"],
+        "video_id": comment["video_id"],
+        "author_id": comment["author_id"],
+        "username": comment["username"],
+        "content": comment["content"],
+        "created_at": comment["created_at"].isoformat(),
+        "profile_url": url_for("profile", id=comment["author_id"]),
+        "delete_url": url_for("comment_delete", comment_id=comment["comment_id"])
+        if comment["author_id"] == user_id else None,
+    }
+
+
+@app.route("/api/videos/<int:video_id>/comments", methods=["GET", "POST"])
+def video_comments(video_id):
+    user_id = get_current_user_id()
+    if user_id is None:
+        return {"error": "Please log in to view or post comments."}, 401
+
+    if request.method == "POST":
+        csrf_token = session.get("csrf_token")
+        if not csrf_token or not compare_digest(csrf_token.encode(), request.headers.get("X-CSRF-Token", "").encode()):
+            return {"error": "Please refresh the page and try again."}, 403
+        payload = request.get_json(silent=True)
+        content = payload.get("content") if isinstance(payload, dict) else None
+        if not isinstance(content, str) or not 1 <= len(content.strip()) <= 1000:
+            return {"error": "Comments must contain 1–1000 characters."}, 400
+        content = content.strip()
+        try:
+            content.encode("utf-8")
+        except UnicodeEncodeError:
+            return {"error": "The comment contains invalid text."}, 400
+        if "\x00" in content:
+            return {"error": "The comment contains invalid text."}, 400
+
+    with database.get_connection() as conn:
+        exists = conn.execute(
+            """
+            SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s) AS user_exists,
+                   EXISTS (SELECT 1 FROM videos WHERE video_id = %s) AS video_exists
+            """,
+            (user_id, video_id),
+        ).fetchone()
+    if not exists["user_exists"]:
+        return {"error": "Please log in again."}, 401
+    if not exists["video_exists"]:
+        return {"error": "This video is no longer available."}, 404
+
+    if request.method == "GET":
+        comments = database.get_comments(video_id)
+        return {"comments": [comment_data(comment, user_id) for comment in comments], "comment_count": len(comments)}
+
+    try:
+        comment = database.create_comment(video_id, user_id, content)
+    except ForeignKeyViolation:
+        return {"error": "The video or account is no longer available. Please refresh the page."}, 404
+    return {"comment": comment_data(comment, user_id), "comment_count": comment["comment_count"]}, 201
+
+
+@app.route("/api/comments/<int:comment_id>", methods=["DELETE"])
+def comment_delete(comment_id):
+    user_id = get_current_user_id()
+    if user_id is None:
+        return {"error": "Please log in to delete comments."}, 401
+    csrf_token = session.get("csrf_token")
+    if not csrf_token or not compare_digest(csrf_token.encode(), request.headers.get("X-CSRF-Token", "").encode()):
+        return {"error": "Please refresh the page and try again."}, 403
+
+    with database.get_connection() as conn:
+        state = conn.execute(
+            """
+            SELECT EXISTS (SELECT 1 FROM users WHERE user_id = %s) AS user_exists,
+                   (SELECT author_id FROM comments WHERE comment_id = %s) AS author_id
+            """,
+            (user_id, comment_id),
+        ).fetchone()
+    if not state["user_exists"]:
+        return {"error": "Please log in again."}, 401
+    if state["author_id"] is None:
+        return {"error": "This comment is no longer available."}, 404
+    if state["author_id"] != user_id:
+        return {"error": "You can only delete your own comments."}, 403
+    deleted = database.delete_comment(comment_id, user_id)
+    if deleted is None:
+        return {"error": "This comment is no longer available."}, 404
+    return deleted
+
 
 @app.route("/liked_videos")
 @requires_auth

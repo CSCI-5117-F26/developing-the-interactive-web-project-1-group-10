@@ -163,6 +163,115 @@ document.querySelectorAll('.like-button').forEach((button) => {
     });
 });
 
+document.querySelectorAll('.vlog-comments[data-comments-url]').forEach((section) => {
+    const list = section.querySelector('.vlog-comment-list');
+    const empty = section.querySelector('.vlog-comments-empty');
+    const count = section.querySelector('.comment-count');
+    const form = section.querySelector('.comment-form');
+    const input = form.querySelector('textarea');
+    const submit = form.querySelector('.comment-submit');
+    const errorMessage = section.querySelector('.vlog-comment-error');
+    let busy = false;
+
+    const setBusy = (pending) => {
+        busy = pending;
+        submit.disabled = pending;
+        input.readOnly = pending;
+        list.querySelectorAll('.comment-delete').forEach((button) => {
+            button.disabled = pending;
+        });
+    };
+    const updateCount = (total) => {
+        count.textContent = total;
+        empty.hidden = list.querySelector('.vlog-comment') !== null;
+    };
+    const send = async (url, options) => {
+        const response = await fetch(url, {
+            ...options,
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': form.dataset.csrfToken },
+        });
+        if (response.status === 401) {
+            window.location.assign('/login');
+            throw new Error('Please log in to continue.');
+        }
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to update comments. Please try again.');
+        }
+        return data;
+    };
+    const createCommentElement = (comment) => {
+        const item = document.createElement('article');
+        item.className = 'vlog-comment';
+        item.dataset.commentId = comment.comment_id;
+        const heading = document.createElement('div');
+        heading.className = 'vlog-comment-heading';
+        const author = document.createElement('a');
+        author.className = 'vlog-comment-author';
+        author.href = comment.profile_url;
+        author.textContent = comment.username;
+        const time = document.createElement('time');
+        time.dateTime = comment.created_at;
+        time.textContent = new Date(comment.created_at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+        heading.append(author, time);
+        const content = document.createElement('p');
+        content.className = 'vlog-comment-content';
+        content.textContent = comment.content;
+        item.append(heading, content);
+        if (comment.delete_url) {
+            const button = document.createElement('button');
+            button.className = 'comment-delete';
+            button.type = 'button';
+            button.dataset.deleteUrl = comment.delete_url;
+            button.textContent = 'Delete';
+            item.append(button);
+        }
+        return item;
+    };
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (busy) return;
+        const content = input.value.trim();
+        if (!content || content.length > 1000) {
+            errorMessage.textContent = 'Comments must contain 1–1000 characters.';
+            errorMessage.hidden = false;
+            return;
+        }
+        setBusy(true);
+        errorMessage.hidden = true;
+        try {
+            const data = await send(section.dataset.commentsUrl, { method: 'POST', body: JSON.stringify({ content }) });
+            list.prepend(createCommentElement(data.comment));
+            updateCount(data.comment_count);
+            input.value = '';
+            list.scrollTop = 0;
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.hidden = false;
+        } finally {
+            setBusy(false);
+        }
+    });
+
+    list.addEventListener('click', async (event) => {
+        const button = event.target.closest('.comment-delete');
+        if (!button || busy) return;
+        setBusy(true);
+        errorMessage.hidden = true;
+        try {
+            const data = await send(button.dataset.deleteUrl, { method: 'DELETE' });
+            button.closest('.vlog-comment').remove();
+            updateCount(data.comment_count);
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.hidden = false;
+        } finally {
+            setBusy(false);
+        }
+    });
+});
+
 document.querySelectorAll('.subscribe-button').forEach((button) => {
     button.addEventListener('click', async () => {
         if (button.disabled) {
