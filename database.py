@@ -103,7 +103,7 @@ def get_videos_by_category(category, user_id=None):
     with get_connection() as conn:
         return conn.execute(
             """
-            SELECT videos.*,
+            SELECT videos.*, users.username AS "userName",
                    (SELECT COUNT(*) FROM video_likes
                     WHERE video_likes.video_id = videos.video_id) AS like_count,
                    (SELECT COUNT(*) FROM comments
@@ -112,8 +112,9 @@ def get_videos_by_category(category, user_id=None):
                            WHERE video_likes.video_id = videos.video_id
                              AND video_likes.user_id = %s) AS liked
             FROM videos
-            WHERE category = %s
-            ORDER BY created_at DESC
+            JOIN users ON videos.author_id = users.user_id
+            WHERE videos.category = %s
+            ORDER BY videos.created_at DESC, videos.video_id DESC
             """,
             (user_id, category),
         ).fetchall()

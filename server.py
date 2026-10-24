@@ -162,6 +162,10 @@ def logout():
 @requires_auth
 def homepage():
     category = request.args.get("category") or "general"
+
+    valid_categories = ["general", "sport", "study", "hobby", "following"]
+    if category not in valid_categories:
+        abort(404)
     if "csrf_token" not in session:
         session["csrf_token"] = token_urlsafe(32)
 
@@ -174,7 +178,7 @@ def homepage():
             "liked": video["liked"],
             "like_count": video["like_count"],
             "comment_count": video["comment_count"],
-            "userName": database.get_users_by_id(video["author_id"])["username"],
+            "userName": video["userName"],
             "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
