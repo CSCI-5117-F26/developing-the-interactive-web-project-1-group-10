@@ -347,6 +347,19 @@ def get_following_videos(my_id):
             (my_id, my_id,),
         ).fetchall()
 
+def get_daily_mission(mission_date, category):
+    with get_connection() as conn:
+        mission = conn.execute(
+            """
+            SELECT mission
+            FROM daily_missions
+            WHERE mission_date = %s AND category = %s
+            """,
+            (mission_date, category),
+        ).fetchone()
+
+    return mission
+
 if __name__ == "__main__":
     create_videos_table()
 

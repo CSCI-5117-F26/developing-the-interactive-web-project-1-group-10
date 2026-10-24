@@ -11,6 +11,15 @@ from database import subscribe as create_subscription
 import database
 
 from weather import get_random_weather
+from datetime import date, timedelta
+import random
+
+MISSION_OPTIONS = {
+    "general": ["bird", "tree", "sunset"],
+    "sport": ["baseball", "running", "basketball"],
+    "study": ["book", "notes", "library"],
+    "hobby": ["drawing", "music", "cooking"],
+}
 
 load_dotenv()
 
@@ -431,6 +440,54 @@ def subscribe(user_id):
         database.unsubscribe(my_id, user_id)
 
     return database.get_subscription_state(my_id, user_id)
+
+def get_daily_mission(mission_date, category):
+    with database.get_connection() as conn:
+        mission = conn.execute(
+            """
+            SELECT mission
+            FROM daily_missions
+            WHERE mission_date = %s AND category = %s
+            """,
+            (mission_date, category),
+        ).fetchone()
+
+    return mission
+
+def get_or_create_daily_mission(mission_date, category):
+    today_mission = get_daily_mission(mission_date, category)
+
+    if today_mission is not None:
+        return today_mission["mission"]
+
+    yesterday = mission_date - timedelta(days=1)
+    yesterday_mission = get_daily_mission(yesterday, category)
+
+    options_list = MISSION_OPTIONS[category].copy()
+
+    if yesterday_mission is not None:
+        previous = yesterday_mission["mission"]
+
+        if previous in options_list:
+            options_list.remove(previous)
+
+    selected_mission = random.choice(options_list)
+    with database.get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO daily_missions (mission_date, category, mission)
+            VALUES (%s, %s, %s)
+            """,
+            (mission_date, category, selected_mission),
+        )
+    return selected_mission
+
+def generate_daily_missions():
+    today = date.today()
+
+    for category in MISSION_OPTIONS:
+        mission = get_or_create_daily_mission(today, category)
+        print(category, mission)
 
 if __name__ == "__main__":
     app.run(debug=True)
