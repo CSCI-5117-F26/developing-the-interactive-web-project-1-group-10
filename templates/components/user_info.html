@@ -1,0 +1,30 @@
+<article class="pure-g user-item">
+    <div class="pure-u-1-4">
+        <a href="{{ url_for('profile', id=user.user_id) }}" class="post-user">
+            <div class="post-avatar" aria-hidden="true">
+                <i data-lucide="user-round"></i>
+            </div>
+            <span class="post-username">{{ user.username }}</span>
+        </a>
+    </div>
+
+    <div class="pure-u-1-2">
+        <span class="subscribe-count" data-count="{{ user.subscribed_count }}">
+            {{ user.subscribed_count }}
+        </span>
+        Followers
+    </div>
+
+    <div class="pure-u-1-4">
+        <button
+            class="subscribe-button pure-button"
+            type="button"
+            aria-label="{{ 'Unsubscribe' if user.subscribed else 'Subscribe' }}"
+            aria-pressed="{{ 'true' if user.subscribed else 'false' }}"
+            data-subscribe-url="{{ url_for('subscribe', user_id=user.user_id) }}"
+            data-csrf-token="{{ session.get('csrf_token', '') }}"
+        >
+        {{ 'Unsubscribe' if user.subscribed else 'Subscribe' }}
+        </button>
+    </div>
+</article>

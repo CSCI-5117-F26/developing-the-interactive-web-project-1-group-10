@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+    <title>{% block title %}Missions{% endblock %}</title>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div
+        id="weatherBackground"
+        class="weather-background"
+        data-weather-auto="{{ 'true' if weather_auto else 'false' }}"
+        data-weather-effect="{{ weather.effect }}"
+        data-weather-intensity="{{ weather.intensity }}"
+        data-weather-density="{{ weather.density }}"
+        data-weather-mode="{{ weather.mode }}"
+        aria-hidden="true"
+    ></div>
+
+    <div class="pure-menu pure-menu-horizontal top-bar">
+        <button
+            id="menuBtn"
+            class="pure-button menu-btn"
+            type="button"
+            aria-label="Open menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
+        ><i data-lucide="menu" aria-hidden="true">☰</i></button>
+
+        <ul class="pure-menu-list category-tabs">
+            <li class="pure-menu-item">
+                <a href="{{ url_for('homepage', category='following') }}"class="pure-menu-link{% if category == 'following' %} active{% endif %}">Following</a></li>
+            <li class="pure-menu-item">
+                <a href="{{ url_for('homepage', category='general') }}"class="pure-menu-link{% if category == 'general' %} active{% endif %}">General</a></li>
+            <li class="pure-menu-item">
+                <a href="{{ url_for('homepage', category='sport') }}"class="pure-menu-link{% if category == 'sport' %} active{% endif %}">Sport</a></li>
+            <li class="pure-menu-item">
+                <a href="{{ url_for('homepage', category='study') }}"class="pure-menu-link{% if category == 'study' %} active{% endif %}">Study</a></li>
+            <li class="pure-menu-item">
+                <a href="{{ url_for('homepage', category='hobby') }}"class="pure-menu-link{% if category == 'hobby' %} active{% endif %}">Hobby</a></li>
+        </ul>
+        <a href="/profile" class="pure-menu-link profile-link" aria-label="Profile" title="Profile">
+            <i data-lucide="user-round" aria-hidden="true">♙</i>
+        </a>
+    </div>
+
+    <button
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+        type="button"
+        aria-label="Close menu"
+        tabindex="-1"
+    ></button>
+
+    <aside id="sidebar" class="pure-menu sidebar" aria-hidden="true">
+        <div class="sidebar-header">
+            <button
+                id="sidebarClose"
+                class="pure-button menu-btn sidebar-close"
+                type="button"
+                aria-label="Close menu"
+            ><i data-lucide="menu" aria-hidden="true"></i></button>
+        </div>
+
+        <ul class="pure-menu-list sidebar-list">
+            <li class="pure-menu-item">
+                <a href="{{ url_for('homepage', category='general') }}" class="pure-menu-link"><i data-lucide="house" class="sidebar-icon" aria-hidden="true"></i>Home</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="#" class="pure-menu-link"><i data-lucide="clipboard-check" class="sidebar-icon" aria-hidden="true"></i>Mission Tracking</a>
+            </li>
+            <li class="pure-menu-item sidebar-divider">
+                <a href="subscription_list" class="pure-menu-link"><i data-lucide="star" class="sidebar-icon" aria-hidden="true"></i>Subscriptions</a>
+            </li>
+        </ul>
+
+        <div class="sidebar-user-section">
+            <p class="sidebar-heading">YOU</p>
+            <ul class="pure-menu-list sidebar-list">
+                <li class="pure-menu-item">
+                    <a href="/profile" class="pure-menu-link"><i data-lucide="user-round" class="sidebar-icon" aria-hidden="true"></i>Profile</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="/liked_videos" class="pure-menu-link"><i data-lucide="heart" class="sidebar-icon" aria-hidden="true"></i>Liked Videos</a>
+                </li>
+                <li class="pure-menu-item">
+                    <a href="{{ url_for('logout') }}" class="pure-menu-link">Log Out</a>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="pure-menu-list sidebar-list">
+            <li class="pure-menu-item sidebar-divider">
+                <a href="{{ url_for('change_weather_random') }}" class="pure-menu-link"><i data-lucide="shuffle" class="sidebar-icon" aria-hidden="true"></i>Change weather</a>
+            </li>
+            <li class="pure-menu-item">
+                <span id="currentWeather" class="pure-menu-link">Current: {% if weather_auto %}Loading...{% else %}{{ weather.effect | capitalize }}{% endif %}</span>
+            </li>
+            <li class="pure-menu-item">
+                <a href="{{ url_for('change_weather_auto') }}" class="pure-menu-link"><i data-lucide="cloud-sun" class="sidebar-icon" aria-hidden="true"></i>Auto weather</a>
+            </li>
+        </ul>
+
+    </aside>
+
+    {% block banner %}{% endblock %}
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="weather-credit">
+        Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>
+    </footer>
+
+    <script src="https://unpkg.com/lucide@1.55.0/dist/umd/lucide.min.js"></script>
+    <script src="{{ url_for('static', filename='js/vendor/weather-effects-js-1.0.1.umd.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
