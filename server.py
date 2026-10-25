@@ -10,6 +10,8 @@ from psycopg.errors import ForeignKeyViolation
 from database import subscribe as create_subscription
 import database
 
+from s3_utils import upload_video_to_s3, delete_video_from_s3
+
 from weather import get_random_weather
 from datetime import date, timedelta
 import random
@@ -50,7 +52,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "my_profile", "vlog_detail", "liked_videos", "subscription_list"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "upload_page", "vlog_detail", "liked_videos", "subscription_list"}:
         return {}
 
     weather = session.get("weather_override")
@@ -233,6 +235,50 @@ def homepage():
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
     print(following_posts)
     return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts)
+
+@app.route("/upload", methods=["GET"])
+@requires_auth
+def upload_page():
+  return render_template("upload.html")
+
+@app.route("/upload", methods=["POST"])
+@requires_auth
+def upload_submit():
+  author_id = session["user"].get("user_id")
+
+  if not author_id:
+    return "Unauthorized", 401
+
+  title = request.form.get("title")
+  description = request.form.get("description", "")
+  category = request.form.get("category", "General")
+  file = request.files.get("video_file")
+
+  if not file or file.filename == "":
+    return "No video file selected", 400
+
+  if not title:
+    return "Title is required", 400
+
+  try:
+    video_url = upload_video_to_s3(file)
+
+    with get_connection() as conn:
+      with conn.cursor() as cur:
+        cur.execute(
+          """
+          INSERT INTO videos (author_id, title, description, video_url, category)
+          VALUES (%s, %s, %s, %s, %s);
+          """,
+          (author_id, title, description, video_url, category)
+        )
+        conn.commit()
+
+  except Exception as e:
+    print(f"Failed to process video upload: {e}")
+    return f"Error: {e}", 500
+
+  return redirect(url_for("homepage", category=category))
 
 @app.route("/videos/<int:video_id>")
 @requires_auth
