@@ -77,7 +77,7 @@ def get_video_by_id(video_id, user_id=None):
     with get_connection() as conn:
         return conn.execute(
             """
-            SELECT videos.*, users.username AS "userName",
+            SELECT videos.*, users.username AS "userName", users.profile_url AS "profile_url",
                    videos.video_url AS video,
                    (SELECT COUNT(*) FROM video_likes
                     WHERE video_likes.video_id = videos.video_id) AS like_count,

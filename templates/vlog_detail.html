@@ -23,7 +23,11 @@
                 <div class="vlog-side-header">
                     <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user vlog-author">
                         <div class="post-avatar" aria-hidden="true">
+                            {% if post.profile_url %}
+                            <img src="{{ post.profile_url }}">
+                            {% else %}
                             <i data-lucide="user-round"></i>
+                            {% endif %}
                         </div>
                         <span class="vlog-author-copy">
                             <span class="post-username">{{ post.userName }}</span>
