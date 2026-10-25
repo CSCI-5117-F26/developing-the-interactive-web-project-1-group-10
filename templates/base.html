@@ -24,13 +24,15 @@
         aria-hidden="true"
     ></div>
 
-    <div class="pure-menu top-bar" style="z-index: 10">
+    <div class="pure-menu pure-menu-horizontal top-bar">
       {% block top_bar %}
         {% include "components/_menu_btn.html" %}
         {% include "components/_category_tabs.html" %}
         {% include "components/_profile_link.html" %}
       {% endblock %}
     </div>
+
+    {% include "components/_sidebar.html" %}
 
     {% block banner %}{% endblock %}
 
