@@ -3,7 +3,18 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
     <main class="profile">
-        <img class="profile-picture" src="{{ url_for('static', filename='images/profile/peter-parker.jpg') }}" alt="Peter Parker">
+        <div class="profile-picture" aria-hidden="true">
+            {% if user_info.profile_url %}
+            <img src="{{ user_info.profile_url }}">
+            {% else %}
+            <i data-lucide="user-round"></i>
+            {% endif %}
+            {% if my_id == user_info.user_id %}
+            <a href="{{ url_for('upload_profile_page') }}" class="upload-profile-picture">
+                <i data-lucide="pencil"></i>
+            </a>
+            {% endif %}
+        </div>
         <h1>{{ user_info.username }}</h1>
         <p>
             <span class="subscribe-count" aria-live="polite" data-count="{{ user_info.subscribed_count }}">{{ user_info.subscribed_count }}</span>

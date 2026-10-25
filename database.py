@@ -249,6 +249,20 @@ def unsubscribe(my_id, user_id):
             (my_id, user_id),
         )
 
+def get_profile_url(user_id):
+    with get_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT profile_url
+            FROM users
+            WHERE user_id = %s
+            """,
+            (user_id,),
+        ).fetchone()
+
+        if row is None:
+            return None
+        return row["profile_url"]
 
 def get_subscription_state(my_id, user_id):
     with get_connection() as conn:

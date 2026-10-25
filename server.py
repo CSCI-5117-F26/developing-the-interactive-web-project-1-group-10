@@ -10,7 +10,7 @@ from psycopg.errors import ForeignKeyViolation
 from database import subscribe as create_subscription
 import database
 
-from s3_utils import upload_video_to_s3, delete_video_from_s3
+from s3_utils import upload_video_to_s3, delete_video_from_s3, upload_profile_to_s3, delete_video_from_s3
 
 from weather import get_random_weather
 from datetime import date, timedelta
@@ -52,7 +52,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "my_profile", "upload_page", "vlog_detail", "liked_videos", "subscription_list"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "upload_page", "vlog_detail", "liked_videos", "subscription_list", "upload_profile_page"}:
         return {}
 
     weather = session.get("weather_override")
@@ -181,6 +181,7 @@ def homepage():
             "like_count": video["like_count"],
             "comment_count": video["comment_count"],
             "userName": video["userName"],
+            "profile_url": database.get_profile_url(video["author_id"]),
             "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
@@ -200,6 +201,7 @@ def homepage():
             "like_count": video["like_count"],
             "comment_count": video["comment_count"],
             "userName": database.get_users_by_id(video["author_id"])["username"],
+            "profile_url": database.get_profile_url(video["author_id"]),
             "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],
@@ -279,6 +281,48 @@ def upload_submit():
     return f"Error: {e}", 500
 
   return redirect(url_for("homepage", category=category))
+
+@app.route("/upload_profile", methods=["GET"])
+@requires_auth
+def upload_profile_page():
+  return render_template("upload_profile.html")
+
+@app.route("/upload_profile", methods=["POST"])
+@requires_auth
+def upload_profile_submit():
+  user_id = session["user"].get("user_id")
+
+  if not user_id:
+    return "Unauthorized", 401
+
+  file = request.files.get("image_file")
+
+  if not file or file.filename == "":
+    return "No image file selected", 400
+
+  prev_url = database.get_profile_url(user_id)
+
+  try:
+    if prev_url is not None:
+        delete_video_from_s3(prev_url)
+    profile_url = upload_profile_to_s3(file)
+
+    with database.get_connection() as conn:
+      with conn.cursor() as cur:
+        cur.execute(
+          """
+          UPDATE users SET profile_url = %s
+          WHERE user_id = %s
+          """,
+          (profile_url, user_id)
+        )
+        conn.commit()
+
+  except Exception as e:
+    print(f"Failed to process video upload: {e}")
+    return f"Error: {e}", 500
+
+  return redirect(url_for("profile", id=get_current_user_id()))
 
 @app.route("/videos/<int:video_id>")
 @requires_auth
@@ -399,6 +443,7 @@ def liked_videos():
             "like_count": video["like_count"],
             "comment_count": video["comment_count"],
             "userName": database.get_users_by_id(video["author_id"])["username"],
+            "profile_url": database.get_profile_url(video["author_id"]),
             "author_id": video["author_id"],
             "title": video["title"],
             "category": video["category"],

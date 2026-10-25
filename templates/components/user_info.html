@@ -2,7 +2,11 @@
     <div class="pure-u-1-4">
         <a href="{{ url_for('profile', id=user.user_id) }}" class="post-user">
             <div class="post-avatar" aria-hidden="true">
+                {% if user.profile_url %}
+                <img src="{{ user.profile_url }}">
+                {% else %}
                 <i data-lucide="user-round"></i>
+                {% endif %}
             </div>
             <span class="post-username">{{ user.username }}</span>
         </a>

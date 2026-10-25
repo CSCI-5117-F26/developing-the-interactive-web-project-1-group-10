@@ -1,8 +1,15 @@
 <article class="post-item" data-video-id="{{ post.video_id }}"{% if not is_detail %} data-detail-url="{{ url_for('vlog_detail', video_id=post.video_id) }}"{% endif %}>
     <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user">
         <div class="post-avatar" aria-hidden="true">
+            {% if post.profile_url %}
+            <img src="{{ post.profile_url }}">
+            {% else %}
             <i data-lucide="user-round"></i>
+            {% endif %}
         </div>
+        <!-- <div class="post-avatar" aria-hidden="true">
+            <i data-lucide="user-round"></i>
+        </div> -->
         <span class="post-username">{{ post.userName }}</span>
     </a>
 
