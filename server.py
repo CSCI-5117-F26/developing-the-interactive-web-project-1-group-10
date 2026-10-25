@@ -263,7 +263,7 @@ def upload_submit():
   try:
     video_url = upload_video_to_s3(file)
 
-    with get_connection() as conn:
+    with database.get_connection() as conn:
       with conn.cursor() as cur:
         cur.execute(
           """
