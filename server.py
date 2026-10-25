@@ -8,6 +8,8 @@ from secrets import compare_digest, token_urlsafe
 
 from database import get_videos_by_category, get_connection, get_users_by_id, get_videos_by_id, like_video, unlike_video, get_video_like_state, create_user, subscribe as create_subscription, unsubscribe, get_subscription_state, get_following_videos
 
+from s3_utils import upload_video_to_s3, delete_video_from_s3
+
 from weather import get_random_weather
 
 load_dotenv()
@@ -39,7 +41,7 @@ def requires_auth(f):
 
 @app.context_processor
 def inject_weather():
-    if request.endpoint not in {"homepage", "profile", "my_profile", "profile_other", "upload"}:
+    if request.endpoint not in {"homepage", "profile", "my_profile", "profile_other", "upload_page"}:
         return {}
 
     weather = session.get("weather_override")
@@ -217,10 +219,49 @@ def homepage():
     print(following_posts)
     return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts)
 
-@app.route("/upload", methods=["GET", "POST"])
+@app.route("/upload", methods=["GET"])
 @requires_auth
-def upload():
+def upload_page():
   return render_template("upload.html")
+
+@app.route("/upload", methods=["POST"])
+@requires_auth
+def upload_submit():
+  author_id = session["user"].get("user_id")
+
+  if not author_id:
+    return "Unauthorized", 401
+
+  title = request.form.get("title")
+  description = request.form.get("description", "")
+  category = request.form.get("category", "General")
+  file = request.files.get("video_file")
+
+  if not file or file.filename == "":
+    return "No video file selected", 400
+
+  if not title:
+    return "Title is required", 400
+
+  try:
+    video_url = upload_video_to_s3(file)
+
+    with get_connection() as conn:
+      with conn.cursor() as cur:
+        cur.execute(
+          """
+          INSERT INTO videos (author_id, title, description, video_url, category)
+          VALUES (%s, %s, %s, %s, %s);
+          """,
+          (author_id, title, description, video_url, category)
+        )
+        conn.commit()
+
+  except Exception as e:
+    print(f"Failed to process video upload: {e}")
+    return f"Error: {e}", 500
+
+  return redirect(url_for("homepage", category=category))
 
 @app.route("/api/videos/<int:video_id>/like", methods=["POST", "DELETE"])
 def video_like(video_id):
