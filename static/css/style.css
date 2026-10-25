@@ -42,11 +42,50 @@
 }
 
 body {
+    --theme-surface: #f4f5f7;
+    --theme-accent: #e2e6eb;
+    --theme-active: #cbd3dd;
     isolation: isolate;
     min-height: 100vh;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #f5f5f5;
+}
+
+body:has(#weatherBackground[data-weather-effect="sun"]) {
+    --theme-surface: #f5f7ea;
+    --theme-accent: #ecf396;
+    --theme-active: #e0ec52;
+}
+
+body:has(#weatherBackground[data-weather-effect="cloudy"]) {
+    --theme-surface: #eef2f6;
+    --theme-accent: #dce5ee;
+    --theme-active: #c4d2e0;
+}
+
+body:has(#weatherBackground[data-weather-effect="rain"]) {
+    --theme-surface: #eef4fa;
+    --theme-accent: #d7e7f5;
+    --theme-active: #b8d2eb;
+}
+
+body:has(#weatherBackground[data-weather-effect="snow"]) {
+    --theme-surface: #f4f9fc;
+    --theme-accent: #e2f2fb;
+    --theme-active: #c6e5f5;
+}
+
+body:has(#weatherBackground[data-weather-effect="fog"]) {
+    --theme-surface: #f1f2f3;
+    --theme-accent: #e0e3e5;
+    --theme-active: #c9ced2;
+}
+
+body:has(#weatherBackground[data-weather-effect="thunderstorm"]) {
+    --theme-surface: #f1eff7;
+    --theme-accent: #ded8ee;
+    --theme-active: #c3b6de;
 }
 
 .weather-background[data-weather-effect="none"] {
@@ -165,7 +204,7 @@ body.menu-open {
 
 .menu-btn:hover,
 .menu-btn:focus {
-    background: #cad27a;
+    background: var(--theme-active);
 }
 
 .top-bar .category-tabs {
@@ -174,7 +213,7 @@ body.menu-open {
     min-width: 0;
     max-width: 900px;
     overflow-x: auto;
-    background: #ecf396;
+    background: var(--theme-accent);
     border-radius: 12px;
     scrollbar-width: thin;
 }
@@ -197,7 +236,7 @@ body.menu-open {
 .top-bar .category-tabs .pure-menu-link:hover,
 .top-bar .category-tabs .pure-menu-link:focus,
 .top-bar .category-tabs .pure-menu-link.active {
-    background: #e0ec52;
+    background: var(--theme-active);
     color: #000;
 }
 
@@ -223,7 +262,7 @@ body.menu-open {
 .mission-banner {
     text-align: center;
     padding: 10px 24px;
-    background: #ecf396;
+    background: var(--theme-accent);
     border-radius: 12px;
     margin: 10px auto;
     box-sizing: border-box;
@@ -265,7 +304,7 @@ body.menu-open {
     height: 100vh;
     height: 100dvh;
     overflow-y: auto;
-    background: #f5f7ea;
+    background: var(--theme-surface);
     box-shadow: 4px 0 14px rgba(0, 0, 0, 0.16);
     transform: translateX(-105%);
     visibility: hidden;
@@ -305,7 +344,7 @@ body.menu-open {
 
 .sidebar .pure-menu-link:hover,
 .sidebar .pure-menu-link:focus {
-    background: #cacaca;
+    background: var(--theme-active);
 }
 
 .sidebar-icon {
@@ -376,6 +415,314 @@ body.menu-open {
     width: 100%;
 }
 
+.post-item[data-detail-url] .post-card {
+    cursor: pointer;
+}
+
+.post-detail-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.post-detail-link:hover,
+.post-detail-link:focus-visible {
+    text-decoration: underline;
+}
+
+.vlog-detail {
+    width: 100%;
+    max-width: 1440px;
+    margin: 24px auto 0;
+}
+
+.vlog-detail .back-to-feed {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.vlog-detail .vlog-watch {
+    grid-template-columns: minmax(0, 7fr) minmax(280px, 3fr);
+    gap: 24px;
+}
+
+.vlog-main {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+.vlog-video {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: clamp(360px, calc(100dvh - 300px), 720px);
+    border-radius: 16px;
+    background: #080a0c;
+    object-fit: contain;
+}
+
+.vlog-intro {
+    min-width: 0;
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: var(--theme-surface);
+}
+
+.vlog-intro .post-title {
+    font-size: clamp(22px, 2vw, 28px);
+    line-height: 1.3;
+}
+
+.vlog-discussion {
+    position: sticky;
+    top: 16px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    height: clamp(560px, calc(100dvh - 160px), 920px);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    background: var(--theme-surface);
+}
+
+.vlog-side-header {
+    flex-shrink: 0;
+    padding: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.vlog-detail .vlog-author {
+    flex-direction: row;
+    gap: 12px;
+    padding: 0;
+}
+
+.vlog-detail .vlog-author .post-avatar {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    background: var(--theme-accent);
+}
+
+.vlog-author .post-avatar .lucide {
+    width: 28px;
+    height: 28px;
+}
+
+.vlog-author-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.vlog-detail .vlog-author .post-username {
+    max-width: none;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.vlog-author-label,
+.vlog-like-label {
+    color: #5f6368;
+    font-size: 14px;
+}
+
+.vlog-side-header .post-actions {
+    margin-top: 16px;
+}
+
+.vlog-comments {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.vlog-comments h2 {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 20px 20px 0;
+    font-size: 20px;
+}
+
+.vlog-comment-list {
+    flex: 1;
+    min-height: 0;
+    padding: 24px 20px;
+    overflow-y: auto;
+}
+
+.vlog-comments-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    color: #5f6368;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.vlog-comments-empty .lucide {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+}
+
+.vlog-comments-empty[hidden] {
+    display: none;
+}
+
+.vlog-comment {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.vlog-comment:first-of-type {
+    padding-top: 0;
+}
+
+.vlog-comment:last-child {
+    border-bottom: 0;
+}
+
+.vlog-comment-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 12px;
+}
+
+.vlog-comment-author {
+    color: #222;
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.vlog-comment-author:hover,
+.vlog-comment-author:focus-visible {
+    text-decoration: underline;
+}
+
+.vlog-comment-heading time {
+    color: #5f6368;
+    font-size: 12px;
+}
+
+.vlog-comment-content {
+    margin: 8px 0;
+    color: #222;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.comment-delete {
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: #b42318;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.vlog-comments-empty p {
+    margin: 0 0 8px;
+}
+
+.vlog-comments-empty p:first-of-type {
+    color: #222;
+    font-weight: 600;
+}
+
+.vlog-comments-footer {
+    flex-shrink: 0;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: #5f6368;
+    font-size: 14px;
+}
+
+.vlog-comments-footer p {
+    margin: 0;
+}
+
+.vlog-comment-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #222;
+    font-weight: 600;
+}
+
+.comment-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 72px;
+    max-height: 160px;
+    padding: 10px 12px;
+    resize: vertical;
+    border: 1px solid #999;
+    border-radius: 10px;
+    background: #fff;
+    color: #222;
+    font: inherit;
+    line-height: 1.5;
+}
+
+.vlog-comment-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.comment-submit {
+    border-radius: 8px;
+    background: var(--theme-active);
+    color: #111;
+}
+
+.comment-submit:disabled,
+.comment-delete:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.vlog-comments-footer .vlog-comment-error {
+    margin-top: 10px;
+    color: #b42318;
+    overflow-wrap: anywhere;
+}
+
+.post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 0 0 12px;
+    color: #5f6368;
+    font-size: 14px;
+}
+
+.post-meta a {
+    color: inherit;
+}
+
+.vlog-detail .post-title,
+.vlog-detail .post-description {
+    overflow-wrap: anywhere;
+}
+
+.vlog-detail .post-description {
+    white-space: pre-wrap;
+}
+
 .post-user {
     display: flex;
     flex-direction: column;
@@ -388,7 +735,7 @@ body.menu-open {
 
 .post-user:hover .post-avatar,
 .post-user:focus .post-avatar {
-    background: #c8c8c8;
+    background: var(--theme-active);
 }
 
 .post-user:focus-visible {
@@ -404,7 +751,7 @@ body.menu-open {
     width: 104px;
     height: 104px;
     border-radius: 50%;
-    background: #f5f7ea;
+    background: var(--theme-surface);
     color: #111;
 }
 
@@ -431,7 +778,7 @@ body.menu-open {
     width: 100%;
     padding: 46px 48px 20px;
     border-radius: 16px;
-    background: #f5f7ea;
+    background: var(--theme-surface);
 }
 
 .post-card::before {
@@ -441,7 +788,7 @@ body.menu-open {
     width: 0;
     height: 0;
     border-top: 14px solid transparent;
-    border-right: 20px solid #f5f7ea;
+    border-right: 20px solid var(--theme-surface);
     border-bottom: 14px solid transparent;
     content: "";
 }
@@ -458,14 +805,14 @@ body.menu-open {
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #f5f7ea;
+    background: var(--theme-surface);
     color: #fff;
     cursor: pointer;
 }
 
 .post-menu:hover,
 .post-menu:focus {
-    background: #aaa;
+    background: var(--theme-active);
 }
 
 .post-menu .lucide {
@@ -515,13 +862,15 @@ body.menu-open {
     gap: 8px;
 }
 
-.post-actions .like-count {
+.post-actions .like-count,
+.post-actions .comment-count {
     flex: 0 0 4ch;
     min-width: 0;
     font-variant-numeric: tabular-nums;
 }
 
-.post-actions button {
+.post-actions button,
+.post-actions .comment-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -532,12 +881,15 @@ body.menu-open {
     border-radius: 50%;
     background: #fff;
     color: #222;
+    text-decoration: none;
     cursor: pointer;
 }
 
 .post-actions button:hover,
-.post-actions button:focus {
-    background: #e0ec52;
+.post-actions button:focus,
+.post-actions .comment-link:hover,
+.post-actions .comment-link:focus {
+    background: var(--theme-active);
 }
 
 .post-actions .lucide {
@@ -546,12 +898,74 @@ body.menu-open {
     stroke-width: 2;
 }
 
+.share-status {
+    margin: 12px 0 0;
+    color: #5f6368;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.share-fallback {
+    display: block;
+    margin-top: 8px;
+    color: #222;
+    font-size: 14px;
+}
+
+.share-fallback[hidden] {
+    display: none;
+}
+
+.share-fallback input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    font: inherit;
+}
+
 .post-actions .like-button[aria-pressed="true"] {
     color: #b42318;
 }
 
 .post-actions .like-button[aria-pressed="true"] .lucide {
     fill: currentColor;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+    .vlog-detail .vlog-watch {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .vlog-video {
+        height: clamp(240px, 56dvh, 520px);
+    }
+
+    .vlog-intro {
+        padding: 18px;
+    }
+
+    .vlog-discussion {
+        position: static;
+        height: auto;
+    }
+
+    .vlog-comment-list {
+        min-height: 220px;
+        max-height: 360px;
+    }
 }
 
 @media (max-width: 680px) {
@@ -648,7 +1062,7 @@ body.menu-open {
         top: -16px;
         left: 28px;
         border-right: 14px solid transparent;
-        border-bottom: 18px solid #f5f7ea;
+        border-bottom: 18px solid var(--theme-surface);
         border-left: 14px solid transparent;
     }
 

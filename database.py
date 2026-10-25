@@ -6,25 +6,6 @@ from psycopg.rows import dict_row
 
 load_dotenv()
 
-def create_users_table():
-    with get_connection() as conn:
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                user_id BIGSERIAL PRIMARY KEY,
-                auth0_id TEXT UNIQUE NOT NULL,
-                username VARCHAR(80) NOT NULL,
-                email TEXT UNIQUE,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-            )
-            """
-        )
-
-def initialize_database():
-    create_users_table()
-    create_videos_table()
-    
-    
 def get_connection():
     database_url = os.getenv("DATABASE_URL")
 
@@ -58,44 +39,17 @@ def create_user(sub_id, username, email):
         conn.commit()
         return user_id, username
 
-def create_videos_table():
-    with get_connection() as conn:
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS videos (
-                id BIGSERIAL PRIMARY KEY,
-                username VARCHAR(80) NOT NULL,
-                title VARCHAR(200) NOT NULL,
-                description TEXT NOT NULL DEFAULT '',
-                video_url TEXT NOT NULL,
-                category VARCHAR(50) NOT NULL,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-            )
-            """
-        )
-
-
-def create_video(username, title, description, video_url, category):
+def create_video(author_id, title, description, video_url, category,
+                 media_type="video", mission_date=None):
     with get_connection() as conn:
         return conn.execute(
             """
-            INSERT INTO videos (
-                username,
-                title,
-                description,
-                video_url,
-                category
-            )
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO videos (author_id, title, description, video_url,
+                                category, media_type, mission_date)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             RETURNING *
             """,
-            (
-                username,
-                title,
-                description,
-                video_url,
-                category,
-            ),
+            (author_id, title, description, video_url, category, media_type, mission_date),
         ).fetchone()
 
 
@@ -103,18 +57,93 @@ def get_videos_by_category(category, user_id=None):
     with get_connection() as conn:
         return conn.execute(
             """
-            SELECT videos.*,
+            SELECT videos.*, users.username AS "userName",
+                   (SELECT COUNT(*) FROM video_likes
+                    WHERE video_likes.video_id = videos.video_id) AS like_count,
+                   (SELECT COUNT(*) FROM comments
+                    WHERE comments.video_id = videos.video_id) AS comment_count,
+                   EXISTS (SELECT 1 FROM video_likes
+                           WHERE video_likes.video_id = videos.video_id
+                             AND video_likes.user_id = %s) AS liked
+            FROM videos
+            JOIN users ON videos.author_id = users.user_id
+            WHERE videos.category = %s
+            ORDER BY videos.created_at DESC, videos.video_id DESC
+            """,
+            (user_id, category),
+        ).fetchall()
+
+def get_video_by_id(video_id, user_id=None):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*, users.username AS "userName",
+                   videos.video_url AS video,
                    (SELECT COUNT(*) FROM video_likes
                     WHERE video_likes.video_id = videos.video_id) AS like_count,
                    EXISTS (SELECT 1 FROM video_likes
                            WHERE video_likes.video_id = videos.video_id
                              AND video_likes.user_id = %s) AS liked
             FROM videos
-            WHERE category = %s
-            ORDER BY created_at DESC
+            JOIN users ON users.user_id = videos.author_id
+            WHERE videos.video_id = %s
             """,
-            (user_id, category),
+            (user_id, video_id),
+        ).fetchone()
+
+
+def get_comments(video_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT comments.*, users.username
+            FROM comments
+            JOIN users ON users.user_id = comments.author_id
+            WHERE comments.video_id = %s
+            ORDER BY comments.created_at DESC, comments.comment_id DESC
+            """,
+            (video_id,),
         ).fetchall()
+
+
+def create_comment(video_id, author_id, content):
+    with get_connection() as conn:
+        comment = conn.execute(
+            """
+            WITH inserted AS (
+                INSERT INTO comments (video_id, author_id, content)
+                VALUES (%s, %s, %s)
+                RETURNING *
+            )
+            SELECT inserted.*, users.username
+            FROM inserted JOIN users ON users.user_id = inserted.author_id
+            """,
+            (video_id, author_id, content),
+        ).fetchone()
+        comment["comment_count"] = conn.execute(
+            "SELECT COUNT(*) AS total FROM comments WHERE video_id = %s",
+            (video_id,),
+        ).fetchone()["total"]
+        return comment
+
+
+def delete_comment(comment_id, author_id):
+    with get_connection() as conn:
+        deleted = conn.execute(
+            """
+            DELETE FROM comments
+            WHERE comment_id = %s AND author_id = %s
+            RETURNING comment_id, video_id
+            """,
+            (comment_id, author_id),
+        ).fetchone()
+        if deleted is not None:
+            deleted["comment_count"] = conn.execute(
+                "SELECT COUNT(*) AS total FROM comments WHERE video_id = %s",
+                (deleted["video_id"],),
+            ).fetchone()["total"]
+        return deleted
+
 
 def get_videos_by_id(user_id):
     with get_connection() as conn:
@@ -180,6 +209,24 @@ def get_video_like_state(user_id, video_id):
             (user_id, video_id),
         ).fetchone()
 
+def get_liked_videos(user_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*,
+            (SELECT COUNT(*) FROM video_likes
+                WHERE video_likes.video_id = videos.video_id) AS like_count,
+            (SELECT COUNT(*) FROM comments
+                WHERE comments.video_id = videos.video_id) AS comment_count,
+                EXISTS (SELECT 1 FROM video_likes
+                        WHERE video_likes.video_id = videos.video_id
+                            AND video_likes.user_id = %s) AS liked
+            FROM videos JOIN video_likes ON videos.video_id = video_likes.video_id
+            WHERE video_likes.user_id = %s
+            """,
+            (user_id, user_id,),
+        ).fetchall()
+
 def subscribe(my_id, user_id):
     with get_connection() as conn:
         conn.execute(
@@ -215,6 +262,26 @@ def get_subscription_state(my_id, user_id):
             (my_id, user_id),
         ).fetchone()
 
+def get_following_lists(my_id):
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT users.*,
+            (SELECT COUNT(*) AS subscribed_count
+            FROM subscription
+            WHERE subscription.user_id = users.user_id
+            ),
+            EXISTS (
+            SELECT 1 FROM subscription
+            WHERE subscription.user_id = users.user_id AND subscription.my_id = %s
+            ) AS subscribed
+            FROM subscription
+            INNER JOIN users on subscription.user_id = users.user_id
+            WHERE subscription.my_id = %s
+            """,
+            (my_id, my_id,),
+        ).fetchall()
+
 def get_following_videos(my_id):
     with get_connection() as conn:
         return conn.execute(
@@ -222,6 +289,8 @@ def get_following_videos(my_id):
             SELECT videos.*,
             (SELECT COUNT(*) FROM video_likes
                 WHERE video_likes.video_id = videos.video_id) AS like_count,
+            (SELECT COUNT(*) FROM comments
+                WHERE comments.video_id = videos.video_id) AS comment_count,
                 EXISTS (SELECT 1 FROM video_likes
                         WHERE video_likes.video_id = videos.video_id
                             AND video_likes.user_id = %s) AS liked
@@ -233,15 +302,15 @@ def get_following_videos(my_id):
             (my_id, my_id,),
         ).fetchall()
 
-if __name__ == "__main__":
-    create_videos_table()
+def get_daily_mission(mission_date, category):
+    with get_connection() as conn:
+        mission = conn.execute(
+            """
+            SELECT mission
+            FROM daily_missions
+            WHERE mission_date = %s AND category = %s
+            """,
+            (mission_date, category),
+        ).fetchone()
 
-    test_video = create_video(
-        username="test_user",
-        title="Test for the database",
-        description="This is a test for the database.",
-        video_url="https://farm3.staticflickr.com/2875/9069037713_1752f5daeb.jpg",
-        category="general",
-    )
-
-    print("Created test video:", test_video)
+    return mission

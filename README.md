@@ -16,6 +16,17 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 * Xuan Gu, ehrma055
 * Donald Huynh, huynh338
 
+## Database setup
+
+Add `DATABASE_URL` to `.env`, then run:
+
+```powershell
+uv sync
+uv run run_schema.py
+```
+
+This sets up or updates the database in `.env` and keeps the existing data.
+Only run it when setting up or changing the tables.
 
 ## Key Features
 

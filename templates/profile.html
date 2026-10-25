@@ -7,7 +7,7 @@
         <h1>{{ user_info.username }}</h1>
         <p>
             <span class="subscribe-count" aria-live="polite" data-count="{{ user_info.subscribed_count }}">{{ user_info.subscribed_count }}</span>
-            <span>followers | 17 videos</span>
+            <span>followers | {{ posts | length }} videos</span>
         </p>
         {% if my_id != user_info.user_id %}
             <button
@@ -24,10 +24,12 @@
 
         <div class="videos">
             {% for post in posts %}
-                <div>
-                    <img src="{{ url_for('static', filename='images/profile/video-1.png') }}"></video>
-                    <p>&#9654; 1 million views</p>
-                </div>
+                <a class="post-detail-link" href="{{ url_for('vlog_detail', video_id=post.video_id) }}">
+                    <div >
+                        <img src="{{ url_for('static', filename='images/profile/video-1.png') }}"></video>
+                        <p>&#9654; 1 million views</p>
+                    </div>
+                </a>
             {% endfor %}
         </div>
     </main>
