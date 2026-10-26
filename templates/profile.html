@@ -42,6 +42,9 @@
                         <p>&#9654; 1 million views</p>
                     </div>
                 </a>
+                {% if my_id == user_info.user_id %}
+                  {% include "components/_video_menu_modal.html" %}
+                {% endif %}
               </div>
             {% endfor %}
         </div>

@@ -310,7 +310,7 @@ def edit_video(video_id):
       )
       conn.commit()
 
-  return redirect(url_for("profile"))
+  return redirect(url_for("profile", id=author_id))
 
 @app.route("/video/<int:video_id>/delete", methods=["POST"])
 @requires_auth
@@ -322,7 +322,7 @@ def delete_video(video_id):
 
   video_url = None
   with database.get_connection() as conn:
-    with conn.cursor() as curr:
+    with conn.cursor() as cur:
       cur.execute("SELECT author_id, video_url FROM videos WHERE video_id = %s;", (video_id,))
       video = cur.fetchone()
 
@@ -337,7 +337,7 @@ def delete_video(video_id):
   if video_url:
     delete_video_from_s3(video_url)
 
-  return redirect(url_for("profile"))
+  return redirect(url_for("profile", id=author_id))
 
 
 @app.route("/upload_profile", methods=["GET"])
