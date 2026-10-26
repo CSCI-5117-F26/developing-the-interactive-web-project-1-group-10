@@ -98,10 +98,7 @@ oauth.register(
 
 @app.route("/")
 def index():
-    if "user" in session:
-        return redirect(url_for("homepage"))
-
-    return render_template("login.html")
+    return redirect(url_for("homepage"))
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
@@ -161,13 +158,14 @@ def logout():
   )
 
 @app.route("/homepage")
-@requires_auth
 def homepage():
     category = request.args.get("category") or "general"
 
     valid_categories = ["general", "sport", "study", "hobby", "following"]
     if category not in valid_categories:
         abort(404)
+    if get_current_user_id() is None and category != "general":
+        return redirect(url_for("homepage", login_required="channel"))
     if "csrf_token" not in session:
         session["csrf_token"] = token_urlsafe(32)
 
@@ -191,7 +189,7 @@ def homepage():
         for video in database_videos
     )
 
-    following_videos = database.get_following_videos(get_current_user_id())
+    following_videos = database.get_following_videos(get_current_user_id()) if get_current_user_id() is not None else []
     following_posts = []
 
     following_posts.extend(
@@ -235,7 +233,6 @@ def homepage():
     ]
 
     mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
-    print(following_posts)
     return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts)
 
 @app.route("/upload", methods=["GET"])
@@ -383,11 +380,12 @@ def upload_profile_submit():
   return redirect(url_for("profile", id=get_current_user_id()))
 
 @app.route("/videos/<int:video_id>")
-@requires_auth
 def vlog_detail(video_id):
     post = database.get_video_by_id(video_id, get_current_user_id())
     if post is None:
         abort(404)
+    if get_current_user_id() is None and post["category"] != "general":
+        return redirect(url_for("homepage", login_required="channel"))
 
     if "csrf_token" not in session:
         session["csrf_token"] = token_urlsafe(32)
@@ -591,7 +589,7 @@ def profile(id):
 @app.route("/api/subscribe/<int:user_id>", methods=["POST", "DELETE"])
 def subscribe(user_id):
     my_id = get_current_user_id()
-    if user_id is None:
+    if my_id is None:
         return {"error": "Please log in to subscribe."}, 401
     if my_id == user_id:
         return {"error": "Cannot subscribe my account."}, 401

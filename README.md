@@ -32,7 +32,7 @@ Only run it when setting up or changing the tables.
 
 **Describe the most challenging features you implemented
 (one sentence per bullet, maximum 4 bullets):**
-
+* Fixed weather requests that worked locally but failed on Render by moving them to the browser, and made the website’s background and colors change with the weather.
 * ...
 
 ## Testing Notes
@@ -109,5 +109,6 @@ Please do not document required libraries. or libraries that are mentioned in th
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
 here:**
+* [https://github.com/021gink/short-drama-ai-skills]: Create your own videos!
 
 ...

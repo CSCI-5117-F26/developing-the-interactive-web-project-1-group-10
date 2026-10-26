@@ -21,7 +21,7 @@
 
             <aside class="vlog-discussion" aria-labelledby="comments-title">
                 <div class="vlog-side-header">
-                    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user vlog-author">
+                    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user vlog-author"{% if not session.get('user') %} data-login-required{% endif %}>
                         <div class="post-avatar" aria-hidden="true">
                             {% if post.profile_url %}
                             <img src="{{ post.profile_url }}">
@@ -38,6 +38,7 @@
                     <div class="post-actions" aria-label="Post actions">
                         <button
                             class="like-button"
+                            {% if not session.get('user') %}data-login-required{% endif %}
                             type="button"
                             aria-label="{{ 'Unlike' if post.liked else 'Like' }}"
                             aria-pressed="{{ 'true' if post.liked else 'false' }}"
@@ -72,7 +73,7 @@
                         {% for comment in comments %}
                             <article class="vlog-comment" data-comment-id="{{ comment.comment_id }}">
                                 <div class="vlog-comment-heading">
-                                    <a class="vlog-comment-author" href="{{ url_for('profile', id=comment.author_id) }}">{{ comment.username }}</a>
+                                    <a class="vlog-comment-author" href="{{ url_for('profile', id=comment.author_id) }}"{% if not session.get('user') %} data-login-required{% endif %}>{{ comment.username }}</a>
                                     <time datetime="{{ comment.created_at.isoformat() }}">{{ comment.created_at.strftime('%Y-%m-%d %H:%M %Z') }}</time>
                                 </div>
                                 <p class="vlog-comment-content">{{ comment.content }}</p>
@@ -83,6 +84,7 @@
                         {% endfor %}
                     </div>
                     <div class="vlog-comments-footer">
+                        {% if session.get('user') %}
                         <form class="comment-form" action="{{ url_for('video_comments', video_id=post.video_id) }}" method="post" data-csrf-token="{{ session.get('csrf_token', '') }}">
                             <label class="vlog-comment-label" for="comment-content">Add a comment</label>
                             <textarea id="comment-content" name="content" rows="3" maxlength="1000" required aria-describedby="comment-help" placeholder="Share your thoughts..."></textarea>
@@ -92,6 +94,9 @@
                             </div>
                         </form>
                         <p class="vlog-comment-error" role="alert" hidden></p>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="pure-button" data-login-required>Log in to comment</a>
+                        {% endif %}
                     </div>
                 </section>
             </aside>

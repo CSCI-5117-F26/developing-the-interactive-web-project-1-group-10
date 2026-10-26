@@ -291,6 +291,49 @@ body.menu-open {
     stroke-width: 2;
 }
 
+.category-tabs .channel-lock {
+    width: 14px;
+    height: 14px;
+    vertical-align: -1px;
+    color: #666;
+}
+
+.login-prompt {
+    box-sizing: border-box;
+    width: min(400px, calc(100% - 32px));
+    padding: 24px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    color: #222;
+}
+
+.login-prompt::backdrop {
+    background: rgb(0 0 0 / 30%);
+}
+
+.login-prompt h2 {
+    margin: 0 0 12px;
+    font-size: 22px;
+}
+
+.login-prompt p {
+    margin: 0 0 24px;
+    color: #5f6368;
+    line-height: 1.5;
+}
+
+.login-prompt-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.login-prompt-login {
+    background: var(--theme-active);
+    color: #111;
+}
+
 .mission-banner {
     text-align: center;
     padding: 10px 24px;
