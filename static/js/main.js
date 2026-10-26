@@ -4,6 +4,21 @@ const overlay = document.getElementById('sidebarOverlay');
 const closeBtn = document.getElementById('sidebarClose');
 const weatherBackground = document.getElementById('weatherBackground');
 const currentWeather = document.getElementById('currentWeather');
+const loginPrompt = document.getElementById('loginPrompt');
+
+if (loginPrompt) {
+    document.addEventListener('click', (event) => {
+        if (event.target.closest('[data-login-required]')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            loginPrompt.showModal();
+        }
+    }, true);
+
+    if (loginPrompt.dataset.open === 'true') {
+        loginPrompt.showModal();
+    }
+}
 
 const weatherForCode = (code) => {
     if ([0, 1].includes(code)) {
@@ -87,10 +102,14 @@ const loadCurrentWeather = async () => {
         weatherBackground.dataset.weatherIntensity = intensity;
         weatherBackground.dataset.weatherDensity = density;
         weatherBackground.dataset.weatherMode = forecast.current.is_day ? 'day' : 'night';
-        currentWeather.textContent = `Current: ${effect[0].toUpperCase()}${effect.slice(1)}`;
+        if (currentWeather) {
+            currentWeather.textContent = `Current: ${effect[0].toUpperCase()}${effect.slice(1)}`;
+        }
         startWeatherEffects();
     } catch (error) {
-        currentWeather.textContent = 'Current: Unavailable';
+        if (currentWeather) {
+            currentWeather.textContent = 'Current: Unavailable';
+        }
         console.warn('Unable to load current weather.', error);
     }
 };
@@ -199,6 +218,7 @@ document.querySelectorAll('.vlog-comments[data-comments-url]').forEach((section)
     const empty = section.querySelector('.vlog-comments-empty');
     const count = section.querySelector('.comment-count');
     const form = section.querySelector('.comment-form');
+    if (!form) return;
     const input = form.querySelector('textarea');
     const submit = form.querySelector('.comment-submit');
     const errorMessage = section.querySelector('.vlog-comment-error');

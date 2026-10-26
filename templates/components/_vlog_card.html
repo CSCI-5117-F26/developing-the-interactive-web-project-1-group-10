@@ -1,5 +1,5 @@
 <article class="post-item" data-video-id="{{ post.video_id }}"{% if not is_detail %} data-detail-url="{{ url_for('vlog_detail', video_id=post.video_id) }}"{% endif %}>
-    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user">
+    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user"{% if not session.get('user') %} data-login-required{% endif %}>
         <div class="post-avatar" aria-hidden="true">
             {% if post.profile_url %}
             <img src="{{ post.profile_url }}">
@@ -35,6 +35,7 @@
         <div class="post-actions" aria-label="Post actions">
             <button
                 class="like-button"
+                {% if not session.get('user') %}data-login-required{% endif %}
                 type="button"
                 aria-label="{{ 'Unlike' if post.liked else 'Like' }}"
                 aria-pressed="{{ 'true' if post.liked else 'false' }}"

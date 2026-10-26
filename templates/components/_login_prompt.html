@@ -1,0 +1,8 @@
+<dialog id="loginPrompt" class="login-prompt" aria-labelledby="loginPromptTitle" aria-describedby="loginPromptDescription" data-open="{{ 'true' if request.args.get('login_required') == 'channel' else 'false' }}">
+    <h2 id="loginPromptTitle">Log in to continue</h2>
+    <p id="loginPromptDescription">Browse General as a guest. Log in to create posts, join the conversation, and explore other channels.</p>
+    <form method="dialog" class="login-prompt-actions">
+        <button class="pure-button" type="submit" autofocus>Keep browsing</button>
+        <a class="pure-button login-prompt-login" href="{{ url_for('login') }}">Log in</a>
+    </form>
+</dialog>

@@ -26,13 +26,19 @@
 
     <div class="pure-menu pure-menu-horizontal top-bar">
       {% block top_bar %}
-        {% include "components/_menu_btn.html" %}
+        {% if session.get('user') %}
+            {% include "components/_menu_btn.html" %}
+        {% endif %}
         {% include "components/_category_tabs.html" %}
         {% include "components/_profile_link.html" %}
       {% endblock %}
     </div>
 
-    {% include "components/_sidebar.html" %}
+    {% if session.get('user') %}
+        {% include "components/_sidebar.html" %}
+    {% else %}
+        {% include "components/_login_prompt.html" %}
+    {% endif %}
 
     {% block banner %}{% endblock %}
 
