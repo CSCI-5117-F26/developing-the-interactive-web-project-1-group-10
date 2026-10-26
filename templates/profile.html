@@ -35,12 +35,14 @@
 
         <div class="videos">
             {% for post in posts %}
+              <div class="video-card-wrapper" style="position: relative; display: inline-block; margin: 10px">
                 <a class="post-detail-link" href="{{ url_for('vlog_detail', video_id=post.video_id) }}">
                     <div >
                         <img src="{{ url_for('static', filename='images/profile/video-1.png') }}"></video>
                         <p>&#9654; 1 million views</p>
                     </div>
                 </a>
+              </div>
             {% endfor %}
         </div>
     </main>

@@ -282,6 +282,64 @@ def upload_submit():
 
   return redirect(url_for("homepage", category=category))
 
+@app.route("/video/<int:video_id>/edit", methods=["POST"])
+@requires_auth
+def edit_video(video_id):
+  title = request.form.get("title")
+  description = request.form.get("description", "")
+  author_id = session["user"].get("user_id")
+
+  if not author_id:
+    return "Unauthorized", 401
+
+  with database.get_connection() as conn:
+    with conn.cursor() as cur:
+      cur.execute("SELECT author_id FROM videos WHERE video_id = %s;", (video_id,))
+      video = cur.fetchone()
+
+      if not video or video["author_id"] != author_id:
+        return "Forbidden", 403
+
+      cur.execute(
+        """
+        UPDATE videos
+        SET title = %s, description = %s
+        WHERE video_id = %s;
+        """,
+        (title, description, video_id)
+      )
+      conn.commit()
+
+  return redirect(url_for("profile"))
+
+@app.route("/video/<int:video_id>/delete", methods=["POST"])
+@requires_auth
+def delete_video(video_id):
+  author_id = session["user"].get("user_id")
+
+  if not author_id:
+    return "Unauthorized", 401
+
+  video_url = None
+  with database.get_connection() as conn:
+    with conn.cursor() as curr:
+      cur.execute("SELECT author_id, video_url FROM videos WHERE video_id = %s;", (video_id,))
+      video = cur.fetchone()
+
+      if not video or video["author_id"] != author_id:
+        return "Forbidden", 403
+
+      video_url = video["video_url"]
+
+      cur.execute("DELETE FROM videos WHERE video_id = %s;", (video_id,))
+      conn.commit()
+
+  if video_url:
+    delete_video_from_s3(video_url)
+
+  return redirect(url_for("profile"))
+
+
 @app.route("/upload_profile", methods=["GET"])
 @requires_auth
 def upload_profile_page():
