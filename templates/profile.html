@@ -36,14 +36,16 @@
         <div class="videos">
             {% for post in posts %}
               <div class="video-card-wrapper" style="position: relative; display: inline-block; margin: 10px">
+
                 <a class="post-detail-link" href="{{ url_for('vlog_detail', video_id=post.video_id) }}">
                     <div style="position: relative; width: 200px; height: 200px; border-radius: 12px; overflow: hidden; background: #e5e5e5;">
                         <img src="{{ post.thumbnail_url if post.thumbnail_url else url_for('static', filename='images/profile/video-1.png') }}" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; bottom: 10px; left: 10px; color: white; font-weight: bold; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px;">
-                            <span>&#9654;</span> <span>{{ post.like_count | default('1.2K') }}</span>
+                            <span>&hearts;</span> <span>{{ post.like_count }}</span>
                         </div>
                     </div>
                 </a>
+
                 {% if my_id == user_info.user_id %}
                   {% include "components/_video_menu_modal.html" %}
                 {% endif %}

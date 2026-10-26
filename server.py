@@ -572,7 +572,20 @@ def profile(id):
     user_id = id or get_current_user_id()
     my_id = get_current_user_id()
     user_info = database.get_users_by_id(user_id, my_id=my_id)
-    posts = database.get_videos_by_id(user_id)
+
+    active_tab = request.args.get("tab", "videos")
+
+    if active_tab == "likes":
+        raw_videos = database.get_liked_videos(user_id)
+    else:
+        raw_videos = database.get_videos_by_id(user_id)
+
+    posts = []
+    for video in raw_videos:
+        video_detail = database.get_video_by_id(video["video_id"], my_id)
+        if video_detail:
+            posts.append(video_detail)
+
     return render_template("profile.html", user_info=user_info, posts=posts, my_id = my_id)
 
 @app.route("/api/subscribe/<int:user_id>", methods=["POST", "DELETE"])
