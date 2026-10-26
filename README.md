@@ -32,7 +32,7 @@ Only run it when setting up or changing the tables.
 
 **Describe the most challenging features you implemented
 (one sentence per bullet, maximum 4 bullets):**
-
+* Fixed weather requests that worked locally but failed on Render by moving them to the browser, and made the website’s background and colors change with the weather.
 * ...
 
 ## Testing Notes
