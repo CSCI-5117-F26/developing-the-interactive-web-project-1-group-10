@@ -261,7 +261,7 @@ def upload_submit():
 
   try:
     video_url = upload_video_to_s3(file)
-    thumbnail_url - extract_and_upload_thumbnail(video_url)
+    thumbnail_url = extract_and_upload_thumbnail(video_url)
 
     with database.get_connection() as conn:
       with conn.cursor() as cur:
