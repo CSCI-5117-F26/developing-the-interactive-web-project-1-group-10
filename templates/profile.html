@@ -44,11 +44,11 @@
                             <span>&hearts;</span> <span>{{ post.like_count }}</span>
                         </div>
                     </div>
-                </a>
-
                 {% if my_id == user_info.user_id %}
                   {% include "components/_video_menu_modal.html" %}
                 {% endif %}
+                </a>
+
               </div>
             {% endfor %}
         </div>

@@ -66,3 +66,6 @@ def delete_profile_from_s3(profile_url):
       s3_client.delete_object(Bucket=BUCKET_NAME, Key=s3_key)
   except Exception as e:
     print(f"Error deleting file from s3: {e}")
+
+def extract_and_upload_thumbnail(video_url):
+  return
