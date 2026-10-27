@@ -10,7 +10,7 @@ from psycopg.errors import ForeignKeyViolation
 from database import subscribe as create_subscription
 import database
 
-from s3_utils import upload_video_to_s3, delete_video_from_s3, upload_profile_to_s3, delete_video_from_s3
+from s3_utils import upload_video_to_s3, delete_video_from_s3, upload_profile_to_s3, delete_video_from_s3, extract_and_upload_thumbnail
 
 from weather import get_random_weather
 from datetime import date, timedelta
@@ -261,15 +261,16 @@ def upload_submit():
 
   try:
     video_url = upload_video_to_s3(file)
+    thumbnail_url - extract_and_upload_thumbnail(video_url)
 
     with database.get_connection() as conn:
       with conn.cursor() as cur:
         cur.execute(
           """
-          INSERT INTO videos (author_id, title, description, video_url, category)
-          VALUES (%s, %s, %s, %s, %s);
+          INSERT INTO videos (author_id, title, description, video_url, category, thumbnail_url)
+          VALUES (%s, %s, %s, %s, %s, %s);
           """,
-          (author_id, title, description, video_url, category)
+          (author_id, title, description, video_url, category, thumbnail_url)
         )
         conn.commit()
 

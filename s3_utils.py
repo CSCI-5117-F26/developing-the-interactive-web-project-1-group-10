@@ -1,3 +1,4 @@
+import cv2
 import os
 import uuid
 import boto3
@@ -68,4 +69,32 @@ def delete_profile_from_s3(profile_url):
     print(f"Error deleting file from s3: {e}")
 
 def extract_and_upload_thumbnail(video_url):
-  return
+  """Extract a frame and upload to s3 """
+  cap = cv2.VideoCapture(video_url)
+  success, frame = cap.read()
+  cap.release()
+
+  if not success:
+    return None
+
+  temp_path = "tmp.jpg"
+  cv2.imwrite(temp_path, frame)
+
+  try:
+    s3_key = f"thumbnails/{uuid.uuid4()}-thumbnail.jpg"
+    with open(temp_path, "rb") as file:
+      s3_client.upload_fileobj(
+        file,
+        BUCKET_NAME,
+        s3_key,
+        ExtraArgs={"ContentType": "image/jpeg"}
+      )
+
+    thumbnail_url = f"https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/{s3_key}"
+    return thumbnail_url
+  except Exception as e:
+    print(f"Error uploading thumbnail: {e}")
+    return None
+  finally:
+    if os.path.exists(temp_path):
+      os.remove(temp_path)
