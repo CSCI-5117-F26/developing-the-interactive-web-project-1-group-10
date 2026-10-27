@@ -41,7 +41,7 @@
                     <div style="position: relative; width: 200px; height: 200px; border-radius: 12px; overflow: hidden; background: #e5e5e5;">
                         <img src="{{ post.thumbnail_url if post.thumbnail_url else url_for('static', filename='images/profile/video-1.png') }}" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; bottom: 10px; left: 10px; color: white; font-weight: bold; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px;">
-                            <span>&hearts;</span> <span>{{ post.like_count }}</span>
+                            <i data-lucide="heart" aria-hidden="true" style="width: 16px; height: 16px; flex-shrink: 0; fill: currentColor;"></i> <span>{{ post.like_count }}</span>
                         </div>
                     </div>
                 {% if my_id == user_info.user_id %}
