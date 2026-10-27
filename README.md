@@ -38,7 +38,7 @@ Only run it when setting up or changing the tables.
 ## Testing Notes
 
 **Is there anything special we need to know in order to effectively test your app? (optional):**
-
+* To unlock all features, please log in. Without logging in, you can only browse limited content.
 * ...
 
 
