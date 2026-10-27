@@ -14,7 +14,7 @@
     <section class="post-feed" aria-label="Posts">
         {% if category != "following" %}
             {% for post in posts %}
-                {% if post.category == category %}
+                {% if queryKeyword or post.category == category %}
                     {% include "components/_vlog_card.html" %}
                 {% endif %}
             {% endfor %}

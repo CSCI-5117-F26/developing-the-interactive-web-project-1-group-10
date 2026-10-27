@@ -328,3 +328,58 @@ def get_daily_mission(mission_date, category):
         ).fetchone()
 
     return mission
+
+def search_videos(query, user_id=None):
+    validation_list= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    word = ""
+    processed_words = []
+
+    for char in query + " ":
+        if char in validation_list:
+            word += char
+        else:
+            if word != "":
+                processed_words.append(word + ":*")
+                word = ""
+
+    if not processed_words:
+        return []
+    queryWithLegalWords = " & ".join(processed_words)
+
+    with get_connection() as conn:
+        return conn.execute(
+            """
+            SELECT videos.*, users.username AS "userName",
+                   (SELECT COUNT(*) FROM video_likes
+                    WHERE video_likes.video_id = videos.video_id) AS like_count,
+                   (SELECT COUNT(*) FROM comments
+                    WHERE comments.video_id = videos.video_id) AS comment_count,
+                   EXISTS (
+                       SELECT 1 FROM video_likes
+                       WHERE video_likes.video_id = videos.video_id
+                         AND video_likes.user_id = %s
+                   ) AS liked
+            FROM videos
+            JOIN users ON videos.author_id = users.user_id
+            WHERE (
+                to_tsvector(
+                    'english',
+                    COALESCE(users.username, '') || ' ' ||
+                    COALESCE(videos.title, '') || ' ' ||
+                    COALESCE(videos.description, '')
+                ) @@ plainto_tsquery('english', %s)
+
+                OR
+
+                to_tsvector(
+                    'english',
+                    COALESCE(users.username, '') || ' ' ||
+                    COALESCE(videos.title, '') || ' ' ||
+                    COALESCE(videos.description, '')
+                ) @@ to_tsquery('english', %s)
+            )
+            AND (%s OR videos.category = 'general')
+            ORDER BY videos.created_at DESC, videos.video_id DESC
+            """,
+            (user_id, query, queryWithLegalWords, user_id is not None),
+        ).fetchall()

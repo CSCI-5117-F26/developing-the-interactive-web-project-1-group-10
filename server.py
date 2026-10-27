@@ -10,17 +10,17 @@ from psycopg.errors import ForeignKeyViolation
 from database import subscribe as create_subscription
 import database
 
-from s3_utils import upload_video_to_s3, delete_video_from_s3, upload_profile_to_s3, delete_video_from_s3, extract_and_upload_thumbnail
+from s3_utils import upload_video_to_s3, delete_video_from_s3, upload_profile_to_s3, delete_video_from_s3
 
 from weather import get_random_weather
 from datetime import date, timedelta
 import random
 
 MISSION_OPTIONS = {
-    "general": ["bird", "tree", "sunset"],
-    "sport": ["baseball", "running", "basketball"],
-    "study": ["book", "notes", "library"],
-    "hobby": ["drawing", "music", "cooking"],
+    "general": ["Bird", "Tree", "Sunset"],
+    "sport": ["Baseball", "Running", "Basketball"],
+    "study": ["Book", "Notes", "Library"],
+    "hobby": ["Drawing", "Music", "Cooking"],
 }
 
 load_dotenv()
@@ -166,12 +166,18 @@ def homepage():
         abort(404)
     if get_current_user_id() is None and category != "general":
         return redirect(url_for("homepage", login_required="channel"))
+    queryKeyword = request.args.get("q", "").strip()
     if "csrf_token" not in session:
         session["csrf_token"] = token_urlsafe(32)
 
     posts = []
 
-    database_videos = database.get_videos_by_category(category, get_current_user_id())
+    user_id = get_current_user_id()
+    if queryKeyword:
+        category = "general"
+        database_videos = database.search_videos(queryKeyword, user_id)
+    else:
+        database_videos = database.get_videos_by_category(category, user_id)
     posts.extend(
         {
             "video_id": video["video_id"],
@@ -209,31 +215,11 @@ def homepage():
         for video in following_videos
     )
 
-    missions = [
-        {
-            "category": "following",
-            "mission": "None",
-        },
-        {
-            "category": "general",
-            "mission": "bird",
-        },
-        {
-            "category": "sport",
-            "mission": "baseball",
-        },
-        {
-            "category": "study",
-            "mission": "book",
-        },
-        {
-            "category": "hobby",
-            "mission": "online",
-        },
-    ]
+    mission = None
+    if category != "following":
+        mission = get_or_create_daily_mission(date.today(), category)
 
-    mission = list(filter(lambda m : m["category"] == category, missions))[0]["mission"]
-    return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts)
+    return render_template("homepage.html", posts=posts, mission=mission, category=category, following_posts=following_posts, queryKeyword=queryKeyword)
 
 @app.route("/upload", methods=["GET"])
 @requires_auth
@@ -261,16 +247,15 @@ def upload_submit():
 
   try:
     video_url = upload_video_to_s3(file)
-    thumbnail_url = extract_and_upload_thumbnail(video_url)
 
     with database.get_connection() as conn:
       with conn.cursor() as cur:
         cur.execute(
           """
-          INSERT INTO videos (author_id, title, description, video_url, category, thumbnail_url)
-          VALUES (%s, %s, %s, %s, %s, %s);
+          INSERT INTO videos (author_id, title, description, video_url, category)
+          VALUES (%s, %s, %s, %s, %s);
           """,
-          (author_id, title, description, video_url, category, thumbnail_url)
+          (author_id, title, description, video_url, category)
         )
         conn.commit()
 

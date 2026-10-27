@@ -26,9 +26,16 @@
 
     <div class="pure-menu pure-menu-horizontal top-bar">
       {% block top_bar %}
-        {% include "components/_menu_btn.html" %}
-        {% include "components/_category_tabs.html" %}
-        {% include "components/_profile_link.html" %}
+        <div class="navbar-left">
+            {% include "components/_menu_btn.html" %}
+        </div>
+        <div class="navbar-middle">
+            {% include "components/_category_tabs.html" %}
+        </div>
+        <div class="navbar-right">
+            {% include "components/_search_bar.html" %}
+            {% include "components/_profile_link.html" %}
+        </div>    
       {% endblock %}
     </div>
 
