@@ -34,6 +34,8 @@ Only run it when setting up or changing the tables.
 (one sentence per bullet, maximum 4 bullets):**
 * The website uses the third-party Open-Meteo API to retrieve real-time weather data and dynamically update the page background to match the current weather conditions.(Also, if you don't like the current background, you can change it yourself!)
 * We use Amazon S3 to upload videos and images for posts and profile images
+* Use AJAX and JavaScript to update likes, comments, and subscriptions without reloading the page, with instant like feedback and error recovery
+* Well executed responsive design
 
 ## Testing Notes
 
