@@ -1,6 +1,6 @@
 {% if session.get('user') %}
 <a href="{{ url_for('my_profile') }}" class="pure-menu-link profile-link" aria-label="Profile" title="Profile">
-    <i data-lucide="user-round" aria-hidden="true">♙</i>
+    <i data-lucide="user-round" aria-hidden="true"></i>
 </a>
 {% else %}
 <a href="{{ url_for('login') }}" class="pure-menu-link profile-link">Login</a>
