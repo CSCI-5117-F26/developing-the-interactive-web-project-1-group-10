@@ -125,6 +125,8 @@ Please do not document required libraries. or libraries that are mentioned in th
 
 * [weather-effects-js](https://github.com/c3nk/weather-effects-js) 1.0.1: renders the animated sun, cloud, rain, snow, fog, and lightning background effects. The project declares an MIT license.
 * [Open-Meteo](https://open-meteo.com/): its free non-commercial API provides the daily Minneapolis WMO weather code that selects the background effect. Weather data is licensed under CC BY 4.0.
+* [Boto3](https://aws.amazon.com/sdk-for-python/): AWS SDK for Python. Used for s3 connections. Boto3 is licensed under the Apache 2 License.
+* [OpenCV](https://opencv.org/): World's biggest open source computer vision library. Used for thumbnail generation. OpenCV 4.5.0 and higher are licensed under the Apache 2 License.
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
