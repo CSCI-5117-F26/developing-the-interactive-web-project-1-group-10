@@ -46,11 +46,29 @@ Only run it when setting up or changing the tables.
 
 ## Screenshots of Site
 
-**[Add a screenshot of each key page (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository)
-along with a very brief caption:**
+### Homepage
 
-![](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif)
+Browse Vlogs by category, view today's mission, and like, comment on, or share posts.
 
+![Homepage with category navigation, the daily mission, and a Vlog post](./static/images/homepage.png)
+
+### My Profile
+
+View your avatar, follower and video counts, and uploaded Vlogs.
+
+![Personal profile with an avatar, follower and video counts, and uploaded Vlogs](./static/images/myprofile.png)
+
+### Upload
+
+Upload a video, add a title and description, select a category, and publish your Vlog.
+
+![Vlog upload form with a file selector, title, category, and description](./static/images/upload.png)
+
+### Menu
+
+Use the sidebar to access Home, Subscriptions, Profile, and Liked Videos, log out, or change the weather background.
+
+![Sidebar menu with navigation links and weather controls](./static/images/menu.png)
 
 ## Mock-up 
 
