@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block banner %}
+    {% if category != "following" %}
+        <div class="mission-banner">
+            <h2>Today's Mission: {{ mission }}</h2>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <section class="post-feed" aria-label="Posts">
+        {% if category != "following" %}
+            {% for post in posts %}
+                {% if queryKeyword or post.category == category %}
+                    {% include "components/_vlog_card.html" %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for post in following_posts %}
+                {% include "components/_vlog_card.html" %}
+            {% endfor %}
+        {% endif %}
+    </section>
+    {% include "components/_upload_btn.html" %}
+{% endblock %}

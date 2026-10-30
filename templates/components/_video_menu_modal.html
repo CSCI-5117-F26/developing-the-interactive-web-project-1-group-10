@@ -1,0 +1,63 @@
+<!-- Meatball Menu Button (...) -->
+<button type="button" onclick="document.getElementById('modal-{{ post.video_id }}').style.display='flex'" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.4); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; z-index: 5; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+    &hellip;
+</button>
+
+<!-- Modal Overlay (Matches the large centered card layout from the wireframe) -->
+<div id="modal-{{ post.video_id }}" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1000; justify-content: center; align-items: center;" onclick="this.style.display='none'">
+    
+    <div style="background: white; width: 85%; max-width: 600px; min-height: 380px; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); position: relative;" onclick="event.stopPropagation()">
+        
+        <!-- Options List View -->
+        <div id="options-view-{{ post.video_id }}">
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1.5rem; font-size: 1.25rem;">
+                
+                <!-- Edit Option -->
+                <li>
+                    <button type="button" onclick="document.getElementById('edit-view-{{ post.video_id }}').style.display='block'; document.getElementById('options-view-{{ post.video_id }}').style.display='none';" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; width: 100%; text-align: left; padding: 0;">
+                        <span style="width: 14px; height: 14px; background: #d1d5db; border-radius: 50%; display: inline-block;"></span> Edit
+                    </button>
+                </li>
+
+                <!-- Delete Option -->
+                <li>
+                    <form action="{{ url_for('delete_video', video_id=post.video_id) }}" method="POST" style="margin: 0;">
+                        <button type="submit" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; width: 100%; text-align: left; padding: 0; color: #111;">
+                            <span style="width: 14px; height: 14px; background: #d1d5db; border-radius: 50%; display: inline-block;"></span> Delete
+                        </button>
+                    </form>
+                </li>
+
+                <!-- Share Option -->
+                <li>
+                    <button type="button" onclick="navigator.clipboard.writeText('{{ post.video_url }}'); alert('Link copied to clipboard!'); document.getElementById('modal-{{ post.video_id }}').style.display='none';" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; width: 100%; text-align: left; padding: 0;">
+                        <span style="width: 14px; height: 14px; background: #d1d5db; border-radius: 50%; display: inline-block;"></span> Share
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Inline Edit Form View (Toggled when 'Edit' is clicked) -->
+        <div id="edit-view-{{ post.video_id }}" style="display: none;">
+            <h3 style="margin-top: 0; margin-bottom: 1.2rem; font-size: 1.3rem;">Edit Video Details</h3>
+            <form action="{{ url_for('edit_video', video_id=post.video_id) }}" method="POST">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 0.3rem;">Title</label>
+                    <input type="text" name="title" value="{{ post.title }}" required style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 0.3rem;">Description</label>
+                    <textarea name="description" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;">{{ post.description }}</textarea>
+                </div>
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                    <button type="button" onclick="document.getElementById('edit-view-{{ post.video_id }}').style.display='none'; document.getElementById('options-view-{{ post.video_id }}').style.display='block';" class="pure-button" style="background: #e5e5e5; padding: 0.5rem 1rem;">Cancel</button>
+                    <button type="submit" class="pure-button pure-button-primary" style="padding: 0.5rem 1rem;">Save</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Close 'X' Button in Top Right Corner of Modal -->
+        <button type="button" onclick="document.getElementById('modal-{{ post.video_id }}').style.display='none'; document.getElementById('edit-view-{{ post.video_id }}').style.display='none'; document.getElementById('options-view-{{ post.video_id }}').style.display='block';" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #666;">✕</button>
+
+    </div>
+</div>

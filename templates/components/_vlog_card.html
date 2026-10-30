@@ -1,0 +1,64 @@
+<article class="post-item" data-video-id="{{ post.video_id }}"{% if not is_detail %} data-detail-url="{{ url_for('vlog_detail', video_id=post.video_id) }}"{% endif %}>
+    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user"{% if not session.get('user') %} data-login-required{% endif %}>
+        <div class="post-avatar" aria-hidden="true">
+            {% if post.profile_url %}
+            <img src="{{ post.profile_url }}">
+            {% else %}
+            <i data-lucide="user-round"></i>
+            {% endif %}
+        </div>
+        <span class="post-username">{{ post.userName }}</span>
+    </a>
+
+    <div class="post-card">
+        <button class="post-menu" type="button" aria-label="More options">
+            <i data-lucide="ellipsis" aria-hidden="true"></i>
+        </button>
+
+        <div>
+            <video class="post-media" src="{{ post.video }}" alt="{{ post.title }}" controls></video>
+        </div>
+
+        <div class="post-copy">
+            {% if is_detail %}
+                <h1 class="post-title" id="vlog-title">{{ post.title }}</h1>
+                <p class="post-meta">
+                    <a href="{{ url_for('homepage', category=post.category) }}">{{ post.category | capitalize }}</a>
+                    <span>Published <time datetime="{{ post.created_at.isoformat() }}">{{ post.created_at.strftime('%b %d, %Y at %H:%M %Z') }}</time></span>
+                </p>
+            {% else %}
+                <h2 class="post-title"><a class="post-detail-link" href="{{ url_for('vlog_detail', video_id=post.video_id) }}">{{ post.title }}</a></h2>
+            {% endif %}
+            <p class="post-description">{{ post.description }}</p>
+        </div>
+
+        <div class="post-actions" aria-label="Post actions">
+            <button
+                class="like-button"
+                {% if not session.get('user') %}data-login-required{% endif %}
+                type="button"
+                aria-label="{{ 'Unlike' if post.liked else 'Like' }}"
+                aria-pressed="{{ 'true' if post.liked else 'false' }}"
+                data-like-url="{{ url_for('video_like', video_id=post.video_id) }}"
+                data-csrf-token="{{ session.get('csrf_token', '') }}"
+            >
+                <i data-lucide="heart" aria-hidden="true"></i>
+            </button>
+            <span class="like-count" aria-live="polite" data-count="{{ post.like_count }}">{{ '999+' if post.like_count > 999 else post.like_count }}</span>
+            <a class="comment-link" href="{{ url_for('vlog_detail', video_id=post.video_id) }}" aria-label="View comments">
+                <i data-lucide="message-circle" aria-hidden="true"></i>
+            </a>
+            <span class="comment-count" aria-live="polite" data-count="{{ post.comment_count }}">{{ '999+' if post.comment_count > 999 else post.comment_count }}</span>
+            <button class="share-button" type="button" aria-label="Share" title="Copy link" data-share-url="{{ url_for('vlog_detail', video_id=post.video_id) }}">
+                <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+            </button>
+        </div>
+        <p class="like-error" role="status" hidden></p>
+        <div class="share-feedback">
+            <p class="share-status" role="status" hidden></p>
+            <label class="share-fallback" hidden>Copy this link:
+                <input type="url" readonly aria-label="Vlog share link">
+            </label>
+        </div>
+    </div>
+</article>

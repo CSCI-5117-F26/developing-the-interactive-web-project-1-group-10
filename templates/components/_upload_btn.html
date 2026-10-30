@@ -1,0 +1,29 @@
+<a href="{{ url_for('upload_page') }}" class="fab-upload" aria-label="Create post"{% if not session.get('user') %} data-login-required{% endif %}>
+    <i data-lucide="plus"></i>
+</a>
+
+<style>
+.fab-upload {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 4rem;
+    height: 4rem;
+    background-color: #d1d5db;
+    color: #4b5555;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    text-decoration: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.fab-upload:hover {
+    background-color: #9ca3af;
+    transform: scale(1.05);
+    color: #1f2937;
+}
+</style>

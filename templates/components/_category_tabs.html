@@ -1,0 +1,10 @@
+<ul class="pure-menu-list category-tabs">
+    {% for channel in ['following', 'general', 'sport', 'study', 'hobby'] %}
+    {% set locked = not session.get('user') and channel != 'general' %}
+    <li class="pure-menu-item">
+        <a href="{{ url_for('homepage', category=channel) }}" class="pure-menu-link{% if category == channel %} active{% endif %}"{% if locked %} data-login-required aria-label="{{ channel | capitalize }} (log in required)"{% endif %}>
+            {{ channel | capitalize }}{% if locked %} <i data-lucide="lock-keyhole" class="channel-lock" aria-hidden="true"></i>{% endif %}
+        </a>
+    </li>
+    {% endfor %}
+</ul>

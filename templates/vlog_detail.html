@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} | Missions{% endblock %}
+
+{% block content %}
+    <section class="vlog-detail" aria-labelledby="vlog-title">
+        <a class="back-to-feed" href="{{ url_for('homepage', category=post.category) }}">&larr; Back to {{ post.category | capitalize }}</a>
+        <article class="post-item vlog-watch" data-video-id="{{ post.video_id }}">
+            <div class="vlog-main">
+                <video class="vlog-video" src="{{ post.video }}" aria-label="{{ post.title }}" controls playsinline preload="metadata"></video>
+
+                <div class="vlog-intro">
+                    <h1 class="post-title" id="vlog-title">{{ post.title }}</h1>
+                    <p class="post-meta">
+                        <a href="{{ url_for('homepage', category=post.category) }}">{{ post.category | capitalize }}</a>
+                        <span>Published <time datetime="{{ post.created_at.isoformat() }}">{{ post.created_at.strftime('%b %d, %Y at %H:%M %Z') }}</time></span>
+                    </p>
+                    <p class="post-description">{{ post.description }}</p>
+                </div>
+            </div>
+
+            <aside class="vlog-discussion" aria-labelledby="comments-title">
+                <div class="vlog-side-header">
+                    <a href="{{ url_for('profile', id=post.author_id) }}" class="post-user vlog-author"{% if not session.get('user') %} data-login-required{% endif %}>
+                        <div class="post-avatar" aria-hidden="true">
+                            {% if post.profile_url %}
+                            <img src="{{ post.profile_url }}">
+                            {% else %}
+                            <i data-lucide="user-round"></i>
+                            {% endif %}
+                        </div>
+                        <span class="vlog-author-copy">
+                            <span class="post-username">{{ post.userName }}</span>
+                            <span class="vlog-author-label">Creator</span>
+                        </span>
+                    </a>
+
+                    <div class="post-actions" aria-label="Post actions">
+                        <button
+                            class="like-button"
+                            {% if not session.get('user') %}data-login-required{% endif %}
+                            type="button"
+                            aria-label="{{ 'Unlike' if post.liked else 'Like' }}"
+                            aria-pressed="{{ 'true' if post.liked else 'false' }}"
+                            data-like-url="{{ url_for('video_like', video_id=post.video_id) }}"
+                            data-csrf-token="{{ session.get('csrf_token', '') }}"
+                        >
+                            <i data-lucide="heart" aria-hidden="true"></i>
+                        </button>
+                        <span class="like-count" aria-live="polite" data-count="{{ post.like_count }}">{{ '999+' if post.like_count > 999 else post.like_count }}</span>
+                        <span class="vlog-like-label">Likes</span>
+                        <button class="share-button" type="button" aria-label="Share" title="Copy link" data-share-url="{{ url_for('vlog_detail', video_id=post.video_id) }}">
+                            <i data-lucide="arrow-up-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <p class="like-error" role="status" hidden></p>
+                    <div class="share-feedback">
+                        <p class="share-status" role="status" hidden></p>
+                        <label class="share-fallback" hidden>Copy this link:
+                            <input type="url" readonly aria-label="Vlog share link">
+                        </label>
+                    </div>
+                </div>
+
+                <section class="vlog-comments" aria-labelledby="comments-title" data-comments-url="{{ url_for('video_comments', video_id=post.video_id) }}">
+                    <h2 id="comments-title">Comments <span class="comment-count" aria-live="polite">{{ comments | length }}</span></h2>
+                    <div class="vlog-comment-list" role="region" aria-labelledby="comments-title" tabindex="0">
+                        <div class="vlog-comments-empty"{% if comments %} hidden{% endif %}>
+                            <i data-lucide="messages-square" aria-hidden="true"></i>
+                            <p>No comments yet.</p>
+                            <p>Be the first to join the conversation.</p>
+                        </div>
+                        {% for comment in comments %}
+                            <article class="vlog-comment" data-comment-id="{{ comment.comment_id }}">
+                                <div class="vlog-comment-heading">
+                                    <a class="vlog-comment-author" href="{{ url_for('profile', id=comment.author_id) }}"{% if not session.get('user') %} data-login-required{% endif %}>{{ comment.username }}</a>
+                                    <time datetime="{{ comment.created_at.isoformat() }}">{{ comment.created_at.strftime('%Y-%m-%d %H:%M %Z') }}</time>
+                                </div>
+                                <p class="vlog-comment-content">{{ comment.content }}</p>
+                                {% if comment.author_id == current_user_id %}
+                                    <button class="comment-delete" type="button" data-delete-url="{{ url_for('comment_delete', comment_id=comment.comment_id) }}">Delete</button>
+                                {% endif %}
+                            </article>
+                        {% endfor %}
+                    </div>
+                    <div class="vlog-comments-footer">
+                        {% if session.get('user') %}
+                        <form class="comment-form" action="{{ url_for('video_comments', video_id=post.video_id) }}" method="post" data-csrf-token="{{ session.get('csrf_token', '') }}">
+                            <label class="vlog-comment-label" for="comment-content">Add a comment</label>
+                            <textarea id="comment-content" name="content" rows="3" maxlength="1000" required aria-describedby="comment-help" placeholder="Share your thoughts..."></textarea>
+                            <div class="vlog-comment-form-actions">
+                                <span id="comment-help">1–1000 characters</span>
+                                <button class="pure-button comment-submit" type="submit">Post</button>
+                            </div>
+                        </form>
+                        <p class="vlog-comment-error" role="alert" hidden></p>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="pure-button" data-login-required>Log in to comment</a>
+                        {% endif %}
+                    </div>
+                </section>
+            </aside>
+        </article>
+    </section>
+{% endblock %}

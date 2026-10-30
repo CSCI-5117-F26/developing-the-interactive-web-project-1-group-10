@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+    <title>{% block title %}Missions{% endblock %}</title>
+    <script src="https://unpkg.com/lucide@1.55.0/dist/umd/lucide.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/vendor/weather-effects-js-1.0.1.umd.js') }}" defer>></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer>></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div
+        id="weatherBackground"
+        class="weather-background"
+        data-weather-auto="{{ 'true' if weather_auto else 'false' }}"
+        data-weather-effect="{{ weather.effect }}"
+        data-weather-intensity="{{ weather.intensity }}"
+        data-weather-density="{{ weather.density }}"
+        data-weather-mode="{{ weather.mode }}"
+        aria-hidden="true"
+    ></div>
+
+    <div class="pure-menu pure-menu-horizontal top-bar">
+      {% block top_bar %}
+        <div class="navbar-left">
+            {% include "components/_menu_btn.html" %}
+        </div>
+        <div class="navbar-middle">
+            {% include "components/_category_tabs.html" %}
+        </div>
+        <div class="navbar-right">
+            {% include "components/_search_bar.html" %}
+            {% include "components/_profile_link.html" %}
+        </div>    
+      {% endblock %}
+    </div>
+
+    {% include "components/_sidebar.html" %}
+
+    {% block banner %}{% endblock %}
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="weather-credit">
+        Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
